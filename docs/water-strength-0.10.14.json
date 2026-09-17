@@ -1,0 +1,53 @@
+{
+  "version": "0.10.14",
+  "java_files_parsed": [
+    "BoatWaterEffects.java",
+    "HeightfieldSurface.java",
+    "WaterSplashRenderer.java"
+  ],
+  "cfl": 0.2267,
+  "maximum_mode_spectral_radius": 0.981431,
+  "free_wave_old": {
+    "peak_abs_height": 0.5593,
+    "radius_above_0_008_blocks": 5.408,
+    "residual_squared_height_ratio": 1.231699262305854e-21
+  },
+  "free_wave_new": {
+    "peak_abs_height": 0.4979,
+    "radius_above_0_008_blocks": 10.0,
+    "residual_squared_height_ratio": 1.246205934157505e-16
+  },
+  "side_wave_steady_targets": [
+    {
+      "blocks_per_tick": 0.12,
+      "old_side_crest": 0.122,
+      "new_side_crest": 0.175
+    },
+    {
+      "blocks_per_tick": 0.35,
+      "old_side_crest": 0.221,
+      "new_side_crest": 0.319
+    },
+    {
+      "blocks_per_tick": 0.4,
+      "old_side_crest": 0.243,
+      "new_side_crest": 0.35
+    },
+    {
+      "blocks_per_tick": 0.8,
+      "old_side_crest": 0.416,
+      "new_side_crest": 0.601
+    },
+    {
+      "blocks_per_tick": 2.0,
+      "old_side_crest": 0.752,
+      "new_side_crest": 1.052
+    }
+  ],
+  "grid_nodes": 9409,
+  "world_scan_budget_unchanged": true,
+  "particle_limits_unchanged": true,
+  "java_compiled": false,
+  "minecraft_launched": false,
+  "fps_measured": false
+}

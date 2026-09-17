@@ -1,0 +1,20 @@
+{
+  "scope": "Offline source-expression force balance; not a Minecraft runtime test",
+  "horizontal_preservation_cases": 39000,
+  "gravity": 0.04,
+  "one_rider_mass": 1.45,
+  "one_stern_puffer_at_45_degrees": {
+    "old_vertical_acceleration": 0.06459422414661738,
+    "new_vertical_acceleration": 0.008777877283695073
+  },
+  "ten_fish_any_orientation_cannot_sustain_flight_in_air": true,
+  "32_fish_at_45_degrees_can_lift_one_rider_boat": true,
+  "apex_ticks_from_initial_vertical_speed_0_8": {
+    "1": 26,
+    "2": 31,
+    "4": 43
+  },
+  "ordinary_rowing_has_no_vertical_thrust": true,
+  "java_compiled": false,
+  "game_launched": false
+}

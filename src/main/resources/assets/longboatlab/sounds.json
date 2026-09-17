@@ -1,0 +1,29 @@
+{
+  "puffer_jet": {
+    "subtitle": "subtitles.longboatlab.puffer_jet",
+    "sounds": [
+      {
+        "name": "longboatlab:puffer_jet",
+        "stream": false
+      }
+    ]
+  },
+  "water_impact": {
+    "subtitle": "subtitles.longboatlab.water_impact",
+    "sounds": [
+      {
+        "name": "longboatlab:water_impact",
+        "stream": false
+      }
+    ]
+  },
+  "water_wake": {
+    "subtitle": "subtitles.longboatlab.water_wake",
+    "sounds": [
+      {
+        "name": "longboatlab:water_wake",
+        "stream": false
+      }
+    ]
+  }
+}

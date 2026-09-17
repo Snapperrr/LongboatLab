@@ -1,0 +1,10 @@
+{
+  "chunks": 1430,
+  "containers": 18,
+  "signs": 97,
+  "functions": 70,
+  "command_lines": 579,
+  "nbt_and_reference_checks": "passed",
+  "minecraft_runtime_tested": false,
+  "commands_parsed_by_minecraft": false
+}

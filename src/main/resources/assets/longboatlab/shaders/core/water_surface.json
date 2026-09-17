@@ -1,0 +1,160 @@
+{
+  "vertex": "longboatlab:water_surface",
+  "fragment": "longboatlab:water_surface",
+  "samplers": [
+    {
+      "name": "HeightField"
+    },
+    {
+      "name": "PatchMask"
+    },
+    {
+      "name": "PatchLight"
+    },
+    {
+      "name": "Sampler2"
+    },
+    {
+      "name": "WaterAtlas"
+    }
+  ],
+  "uniforms": [
+    {
+      "name": "ModelViewMat",
+      "type": "matrix4x4",
+      "count": 16,
+      "values": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "ProjMat",
+      "type": "matrix4x4",
+      "count": 16,
+      "values": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "PatchOrigin",
+      "type": "float",
+      "count": 3,
+      "values": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "FogStart",
+      "type": "float",
+      "count": 1,
+      "values": [
+        0
+      ]
+    },
+    {
+      "name": "FogEnd",
+      "type": "float",
+      "count": 1,
+      "values": [
+        1
+      ]
+    },
+    {
+      "name": "FogColor",
+      "type": "float",
+      "count": 4,
+      "values": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "FogShape",
+      "type": "int",
+      "count": 1,
+      "values": [
+        0
+      ]
+    },
+    {
+      "name": "WaterStill",
+      "type": "float",
+      "count": 4,
+      "values": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "TickDelta",
+      "type": "float",
+      "count": 1,
+      "values": [
+        0
+      ]
+    },
+    {
+      "name": "WaterUvInset",
+      "type": "float",
+      "count": 1,
+      "values": [
+        0
+      ]
+    },
+    {
+      "name": "UpShade",
+      "type": "float",
+      "count": 1,
+      "values": [
+        1
+      ]
+    },
+    {
+      "name": "ColorModulator",
+      "type": "float",
+      "count": 4,
+      "values": [
+        1,
+        1,
+        1,
+        1
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+data modify block 596 64 49 Items set value [{"id":"minecraft:oak_boat","count":1,"Slot":0b},{"id":"minecraft:oak_boat","count":1,"Slot":1b},{"id":"minecraft:wooden_shovel","count":1,"Slot":2b},{"id":"minecraft:wooden_shovel","count":1,"Slot":3b},{"id":"minecraft:pufferfish_bucket","count":1,"Slot":4b},{"id":"minecraft:pufferfish_bucket","count":1,"Slot":5b},{"id":"minecraft:mace","count":1,"Slot":6b},{"id":"minecraft:mace","count":1,"Slot":7b}]
+scoreboard players set #pit2 lr_pit 1

@@ -1,0 +1,21 @@
+{
+  "source": "maps/Puffer_Rally_Mountain_V11",
+  "copy": "Puffer_Rally_Final",
+  "archive": "Puffer_Rally_Final.zip",
+  "map_revision": "V11",
+  "recommended_mod_version": "0.10.16",
+  "minecraft": "1.21.1",
+  "level_name": "河豚盘山拉力赛 V11",
+  "data_version": 3955,
+  "files": 215,
+  "regions": 12,
+  "save_bytes": 17867699,
+  "archive_bytes": 3968487,
+  "archive_sha256": "bd38344731ddfed368ca188d8e5733a3586e6857c50a458d1a546845a275dd53",
+  "every_file_matches_source": true,
+  "every_zip_entry_matches_copy": true,
+  "zip_crc_checked": true,
+  "bundled_race_datapack": true,
+  "contains_playerdata": false,
+  "runtime_started": false
+}

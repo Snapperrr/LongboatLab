@@ -1,0 +1,13 @@
+{
+  "chunks": 4949,
+  "regions": 15,
+  "containers": 4,
+  "signs": 39,
+  "functions": 79,
+  "command_lines": 786,
+  "geometry_points_checked": 107,
+  "length_blocks": 4389.58,
+  "nbt_and_reference_checks": "passed",
+  "minecraft_runtime_tested": false,
+  "commands_parsed_by_minecraft": false
+}

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "longboatlab",
+  "version": "${version}",
+  "name": "Longboat Lab",
+  "description": "Continuous extensible vanilla boats, detachable oars and differential rowing.",
+  "authors": ["xc"],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.xc.longboatlab.LongboatLab"],
+    "client": ["com.xc.longboatlab.client.LongboatClient"]
+  },
+  "mixins": ["longboatlab.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "fabric-api": "*",
+    "minecraft": "1.21.1",
+    "java": ">=21"
+  }
+}

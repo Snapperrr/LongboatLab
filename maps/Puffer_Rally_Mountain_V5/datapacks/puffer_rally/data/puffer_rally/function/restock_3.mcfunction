@@ -1,0 +1,1 @@
+data merge block 353 64 1182 {"Items":[],"Lock":"longboatlab_personal_supply","CustomName":"{\"text\":\"个人补给 4\",\"color\":\"gold\",\"bold\":false}","components":{"minecraft:custom_data":{"LongboatRaceStation":3,"LongboatSupplyVersion":1}}}

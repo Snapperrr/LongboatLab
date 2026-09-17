@@ -1,0 +1,17 @@
+{
+  "chunks": 8879,
+  "regions": 20,
+  "block_entities": 50,
+  "arrows": 489,
+  "continuous_piers": 84,
+  "length_blocks": 9145.33,
+  "light_sources": 417,
+  "countdown_seconds": 10,
+  "finish_harbor_checked": true,
+  "functions": 173,
+  "geometry_checks": 128133,
+  "failures": [],
+  "failure_count": 0,
+  "minecraft_runtime_tested": false,
+  "commands_parsed_by_minecraft": false
+}

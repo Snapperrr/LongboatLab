@@ -1,0 +1,30 @@
+{
+  "required": true,
+  "package": "com.xc.longboatlab.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "SupplyItemStackMixin",
+    "SupplyInventoryMixin",
+    "BoatEntityMixin",
+    "BoatItemMixin",
+    "RepairItemRecipeMixin",
+    "VehicleEntityMixin",
+    "EntityBoundsMixin",
+    "BoatDispenserMixin",
+    "ServerBoatMovementMixin",
+    "WorldBoatCollisionMixin",
+    "RiderFrameMixin"
+  ],
+  "client": [
+    "client.BoatRendererMixin",
+    "client.MinecraftClientMixin",
+    "client.BoostFovMixin",
+    "client.BoatItemRendererMixin",
+    "client.RiderCameraMixin",
+    "client.RiderRendererMixin",
+    "client.WaterTerrainShaderMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

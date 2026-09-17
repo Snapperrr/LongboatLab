@@ -1,0 +1,15 @@
+{
+  "java_files_parsed": 12,
+  "longitudinal_seams_checked": 336,
+  "gunwale_rays_checked": 36,
+  "cache_overlap_cases": 147,
+  "scan_queue_positions": 4,
+  "maximum_cells_scanned_per_tick": 128,
+  "inventory_capacity_cases": 10,
+  "compressed_seam_geometry_cases": 405,
+  "mounted_block_source_guards_checked": true,
+  "hand_only_install_cases": 4,
+  "java_compiled": false,
+  "minecraft_launched": false,
+  "fps_measured": false
+}

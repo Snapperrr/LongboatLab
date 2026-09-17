@@ -1,0 +1,53 @@
+scoreboard players set #inside lr_tmp 0
+execute positioned 1457.11 58 1207.80 if entity @s[dx=65.8,dy=20,dz=65.8] run scoreboard players set #inside lr_tmp 1
+execute positioned 1457.56 58 1224.25 if entity @s[dx=64.9,dy=20,dz=64.9] run scoreboard players set #inside lr_tmp 1
+execute positioned 1458.02 58 1240.72 if entity @s[dx=64.0,dy=20,dz=64.0] run scoreboard players set #inside lr_tmp 1
+execute positioned 1458.50 58 1257.20 if entity @s[dx=63.0,dy=20,dz=63.0] run scoreboard players set #inside lr_tmp 1
+execute positioned 1458.98 58 1273.68 if entity @s[dx=62.0,dy=20,dz=62.0] run scoreboard players set #inside lr_tmp 1
+execute positioned 1459.45 58 1290.14 if entity @s[dx=61.1,dy=20,dz=61.1] run scoreboard players set #inside lr_tmp 1
+execute positioned 1459.90 58 1306.59 if entity @s[dx=60.2,dy=20,dz=60.2] run scoreboard players set #inside lr_tmp 1
+execute positioned 1460.32 58 1323.02 if entity @s[dx=59.4,dy=20,dz=59.4] run scoreboard players set #inside lr_tmp 1
+execute positioned 1460.71 58 1339.41 if entity @s[dx=58.6,dy=20,dz=58.6] run scoreboard players set #inside lr_tmp 1
+execute positioned 1461.06 58 1355.76 if entity @s[dx=57.9,dy=20,dz=57.9] run scoreboard players set #inside lr_tmp 1
+execute positioned 1461.36 58 1372.06 if entity @s[dx=57.3,dy=20,dz=57.3] run scoreboard players set #inside lr_tmp 1
+execute positioned 1461.61 58 1388.31 if entity @s[dx=56.8,dy=20,dz=56.8] run scoreboard players set #inside lr_tmp 1
+execute positioned 1461.80 58 1404.50 if entity @s[dx=56.4,dy=20,dz=56.4] run scoreboard players set #inside lr_tmp 1
+execute positioned 1461.93 58 1420.63 if entity @s[dx=56.1,dy=20,dz=56.1] run scoreboard players set #inside lr_tmp 1
+execute positioned 1461.99 58 1436.69 if entity @s[dx=56.0,dy=20,dz=56.0] run scoreboard players set #inside lr_tmp 1
+execute positioned 1461.99 58 1452.69 if entity @s[dx=56.0,dy=20,dz=56.0] run scoreboard players set #inside lr_tmp 1
+execute positioned 1461.93 58 1468.62 if entity @s[dx=56.1,dy=20,dz=56.1] run scoreboard players set #inside lr_tmp 1
+execute positioned 1461.90 58 1471.90 if entity @s[dx=56.2,dy=20,dz=56.2] run scoreboard players set #inside lr_tmp 1
+execute positioned 1490.00 64 1500.00 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1490.98 64 1507.25 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1493.82 64 1514.00 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1498.40 64 1520.25 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1504.58 64 1526.00 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1512.22 64 1531.25 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1521.20 64 1536.00 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1531.38 64 1540.25 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1542.62 64 1544.00 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1554.80 64 1547.25 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1567.78 64 1550.00 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1581.42 64 1552.25 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1595.60 64 1554.00 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1610.18 64 1555.25 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1625.02 64 1556.00 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1640.00 64 1556.25 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1654.98 64 1556.00 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1669.82 64 1555.25 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1684.40 64 1554.00 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1698.58 64 1552.25 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1712.22 64 1550.00 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1725.20 64 1547.25 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1737.38 64 1544.00 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1748.62 64 1540.25 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1758.80 64 1536.00 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1767.78 64 1531.25 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1775.42 64 1526.00 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1781.60 64 1520.25 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1786.18 64 1514.00 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1789.02 64 1507.25 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute positioned 1790.00 64 1500.00 if entity @s[distance=..23] run scoreboard players set #inside lr_tmp 1
+execute if score #inside lr_tmp matches 1 run scoreboard players set @s lr_off 0
+execute if score #inside lr_tmp matches 0 run scoreboard players add @s lr_off 1
+execute if score @s lr_off matches 3.. unless score @s lr_warn matches 1.. run function puffer_rally:off_course

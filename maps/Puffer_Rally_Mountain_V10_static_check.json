@@ -1,0 +1,21 @@
+{
+  "chunks": 4284,
+  "regions": 12,
+  "block_entities": 69,
+  "arrows": 190,
+  "continuous_piers": 42,
+  "length_blocks": 4655.78,
+  "light_sources": 1990,
+  "countdown_seconds": 10,
+  "finish_harbor_checked": true,
+  "night_lighting_samples": 2178,
+  "minimum_block_light_lower_bound": 8,
+  "functions": 204,
+  "single_kind_crates": 12,
+  "ground_details": 282,
+  "geometry_checks": 68681,
+  "failures": [],
+  "failure_count": 0,
+  "minecraft_runtime_tested": false,
+  "commands_parsed_by_minecraft": false
+}

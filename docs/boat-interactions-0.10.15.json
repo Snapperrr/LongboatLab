@@ -1,0 +1,15 @@
+{
+  "version": "0.10.15",
+  "java_files_parsed": 6,
+  "pose_cases": 1152,
+  "shell_ray_cases": 3456,
+  "old_envelope_misses_reproduced": 516,
+  "empty_corner_miss_checked": true,
+  "mounted_block_priority_guard_checked": true,
+  "seat_change_without_remount_guard_checked": true,
+  "finite_hit_reach_occlusion_source_guards_checked": true,
+  "vanilla_damage_path_guard_checked": true,
+  "java_compiled": false,
+  "minecraft_launched": false,
+  "network_and_multiplayer_tested": false
+}

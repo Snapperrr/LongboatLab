@@ -1,0 +1,15 @@
+{
+  "version": "0.10.19",
+  "cross_section_cases": 161,
+  "pressure_rotation_cases": 730,
+  "height_and_breaking_cases": 264,
+  "foam_surface_cases": 16261,
+  "open_froth_fraction": 0.6613,
+  "dense_froth_fraction": 0.0616,
+  "continuous_uv_and_shared_release_source_guards": true,
+  "particle_and_query_budgets_unchanged": true,
+  "java_compiled": false,
+  "minecraft_launched": false,
+  "in_game_visuals_verified": false,
+  "fps_measured": false
+}

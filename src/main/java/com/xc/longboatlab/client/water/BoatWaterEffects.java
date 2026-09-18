@@ -29,6 +29,16 @@ public final class BoatWaterEffects {
     private static int samplesLeft, clock;
 
     private BoatWaterEffects() {}
+    /** Cheap read-only snapshot for the in-game graph; no rescanning or duplicate simulation. */
+    public record Diagnostics(boolean shader, boolean field, int hulls, int tracked, int samples,
+                              int hullStrips, int wakeStrips, int splashes, int drops, int mist, int ripples) {}
+    public static Diagnostics diagnostics() {
+        var c=EFFECTS.counts();
+        var model=surface instanceof HeightfieldSurface h?h:null;
+        return new Diagnostics(WaterSurfaceShaders.available(), model!=null && model.active(),
+                model==null?0:model.contributingHulls(), TRACKS.size(), Math.max(0,SAMPLE_BUDGET-samplesLeft),
+                c.hullStrips(),c.wakeStrips(),c.splashes(),c.drops(),c.mist(),c.ripples());
+    }
     public static void register() {
         WorldRenderEvents.AFTER_ENTITIES.register(context -> surface.render(context));
         com.xc.longboatlab.client.BoatEffectRenderPass.register(EFFECTS::render);

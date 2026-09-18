@@ -92,7 +92,7 @@ def wake_velocity(relative, flow, outward, power, fog, scatter):
         drift = unit(drift)*.12
     eject = min(.17, .035+power*.060+max(0, into)*.08) * (.60 if fog else 1) * (.9+abs(scatter)*.2)
     jitter = np.array([-out[2], 0, out[0]])*min(.008, np.linalg.norm(along)*.03)*scatter
-    lift = min(.17, .06+power*.09)*(.60 if fog else 1)*(1+scatter*.22)
+    lift = min(.17, .06+power*.09)*(.16 if fog else 1)*(1+scatter*.22)
     velocity = drift+out*eject+jitter+np.array([0, lift, 0])
     limit = constant('MAX_WAKE_SPRAY_SPEED')
     if np.linalg.norm(velocity) > limit:
@@ -171,8 +171,9 @@ for quality in (1, 2, 3):
             budget_cases += 1
 assert constant('MAX_DROPS') == 384 and constant('MAX_MIST') == 192
 
+version = re.search(r'^mod_version=(.+)$', (ROOT/'gradle.properties').read_text(), re.M)[1].strip()
 report = {
-    'version': '0.10.16', 'java_files_parsed': len(names),
+    'version': version, 'java_files_parsed': len(names),
     'yaw_interpolation_cases': yaw_cases, 'old_wrap_jump_cases_reproduced': old_wrap_jumps,
     'largest_old_seat_position_error_blocks': round(largest_old_error, 6),
     'largest_new_seat_position_error_blocks': round(largest_new_error, 12),
@@ -181,5 +182,5 @@ report = {
     'particle_pool_limits_unchanged': True, 'java_compiled': False, 'minecraft_launched': False,
     'in_game_visuals_verified': False, 'fps_measured': False,
 }
-(ROOT/'docs/wake-motion-0.10.16.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
+(ROOT/f'docs/wake-motion-{version}.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
 print(json.dumps(report, indent=2))

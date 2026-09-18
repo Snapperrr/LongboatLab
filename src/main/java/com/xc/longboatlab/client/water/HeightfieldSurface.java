@@ -47,6 +47,7 @@ public final class HeightfieldSurface implements WaterSurfaceModel {
     private boolean active;
 
     public boolean active() { return active && WaterSurfaceShaders.available(); }
+    public int contributingHulls() { return hullsThisTick; }
     @Override public void clear() {
         active = false; world = null; age = lastImpact = scanRow = 0;
         Arrays.fill(height, 0); Arrays.fill(previous, 0); Arrays.fill(velocity, 0);

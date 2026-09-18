@@ -1,0 +1,32 @@
+{
+  "chunks": 4284,
+  "regions": 12,
+  "block_entities": 53,
+  "arrows": 190,
+  "continuous_piers": 42,
+  "length_blocks": 4655.78,
+  "light_sources": 1990,
+  "countdown_seconds": 10,
+  "finish_harbor_checked": true,
+  "night_lighting_samples": 2178,
+  "minimum_block_light_lower_bound": 8,
+  "functions": 196,
+  "single_kind_crates": 4,
+  "ground_details": 282,
+  "station_resource_order": [
+    "oars",
+    "boats",
+    "fish",
+    "fish"
+  ],
+  "seated_service_rays": 10,
+  "maximum_service_reach": 3.173,
+  "hull_approach_voxels": 1386,
+  "boat_workbench_adjacent": true,
+  "dragon_fight_data_present": true,
+  "geometry_checks": 73168,
+  "failures": [],
+  "failure_count": 0,
+  "minecraft_runtime_tested": false,
+  "commands_parsed_by_minecraft": false
+}

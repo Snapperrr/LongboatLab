@@ -26,8 +26,8 @@ def build(m,s,number):
             flare=max(0,min(1,(half+2-abs(a))/7));flare=flare*flare*(3-2*flare)
             wall=edge+2+12*flare
             if b<wall:
-                c.box(x,58,z,x,59,z,'dark_prismarine')
-                c.box(x,60,z,x,63,z,'water',level='0')
+                c.box(x,58,z,x,62,z,'dark_prismarine')
+                c.box(x,63,z,x,63,z,'water',level='0')
                 c.box(x,64,z,x,77,z,'air')
                 water.append([x,63,z]);clearance.append([x,65,z])
             elif b<wall+4:
@@ -77,7 +77,7 @@ def build(m,s,number):
         for k in range(6):
             for sign in (-1,1):
                 x,z=at(a+sign*(5-k)*.6,edge+k)
-                c.box(x,59,z,x,59,z,'sea_lantern')
+                c.box(x,62,z,x,62,z,'sea_lantern')
     x,z=at(-half+3,edge+17)
     c.base.sign(x,71,z,[f'补给港 {number}',title,'驶入侧方水道','无需下船'])
     x,z=at(0,edge+8)
@@ -105,7 +105,8 @@ def clear_markers(m):
         for entities in c.base.BLOCK_ENTITIES.values():
             entities[:]=[be for be in entities if (be['x'][1],be['z'][1]) not in cleared or be['y'][1]>73]
         for x,y,z in station['water']:
-            c.box(x,60,z,x,63,z,'water',level='0')
+            # Keep the one-block basin and its illuminated floor from build().
+            c.box(x,63,z,x,63,z,'water',level='0')
             c.box(x,64,z,x,73,z,'air')
 
 

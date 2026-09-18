@@ -1,0 +1,1058 @@
+{
+  "source": "maps\\Puffer_Rally_Mountain_V12",
+  "projection": "orthographic isometric",
+  "transparent_background": true,
+  "renderer": "Actual saved voxel faces, vanilla texture average colors; no Minecraft/shader execution.",
+  "images": [
+    {
+      "number": 1,
+      "file": "01_起航港—01 起步补给.png",
+      "title": "起航港—01 起步补给",
+      "start": 0,
+      "end": 62.400000000000006,
+      "type": "stage",
+      "bounds_xz": [
+        -72,
+        -74,
+        72,
+        99
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 38547,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1255,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 2,
+      "file": "02_01 起步补给—02 弹簧水闸出口.png",
+      "title": "01 起步补给—02 弹簧水闸出口",
+      "start": 62.400000000000006,
+      "end": 166.4,
+      "type": "stage",
+      "bounds_xz": [
+        -36,
+        26,
+        36,
+        203
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 22501,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1041,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 3,
+      "file": "03_02 弹簧水闸出口—03 林地大弯.png",
+      "title": "02 弹簧水闸出口—03 林地大弯",
+      "start": 166.4,
+      "end": 301.6,
+      "type": "stage",
+      "bounds_xz": [
+        -36,
+        130,
+        50,
+        335
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 32849,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1229,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 4,
+      "file": "04_03 林地大弯—04 初级冰面出口.png",
+      "title": "03 林地大弯—04 初级冰面出口",
+      "start": 301.6,
+      "end": 405.6,
+      "type": "stage",
+      "bounds_xz": [
+        -23,
+        262,
+        150,
+        348
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 33676,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.14,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 5,
+      "file": "05_04 初级冰面出口—05 岩壁航道.png",
+      "title": "04 初级冰面出口—05 岩壁航道",
+      "start": 405.6,
+      "end": 504.40000000000003,
+      "type": "stage",
+      "bounds_xz": [
+        77,
+        266,
+        247,
+        348
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 29015,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.165,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 6,
+      "file": "06_05 岩壁航道—06 钩爪断谷入口.png",
+      "title": "05 岩壁航道—06 钩爪断谷入口",
+      "start": 504.40000000000003,
+      "end": 590.2,
+      "type": "stage",
+      "bounds_xz": [
+        174,
+        186,
+        265,
+        339
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 26869,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1581,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 7,
+      "file": "07_06 钩爪断谷入口—07 钩爪断谷中继.png",
+      "title": "06 钩爪断谷入口—07 钩爪断谷中继",
+      "start": 590.2,
+      "end": 621.9200000000001,
+      "type": "stage",
+      "bounds_xz": [
+        192,
+        154,
+        265,
+        259
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 16344,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.0794,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 8,
+      "file": "08_07 钩爪断谷中继—08 峡谷出口.png",
+      "title": "07 钩爪断谷中继—08 峡谷出口",
+      "start": 621.9200000000001,
+      "end": 650.0,
+      "type": "stage",
+      "bounds_xz": [
+        192,
+        126,
+        265,
+        227
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 15837,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.0773,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 9,
+      "file": "09_08 峡谷出口—09 检查点.png",
+      "title": "08 峡谷出口—09 检查点",
+      "start": 650.0,
+      "end": 743.6,
+      "type": "stage",
+      "bounds_xz": [
+        192,
+        33,
+        269,
+        199
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 22328,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1062,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 10,
+      "file": "10_09 检查点—10 海岸灯塔.png",
+      "title": "09 检查点—10 海岸灯塔",
+      "start": 743.6,
+      "end": 858.0,
+      "type": "stage",
+      "bounds_xz": [
+        196,
+        5,
+        372,
+        106
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 28669,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1222,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 11,
+      "file": "11_10 海岸灯塔—11 检查点.png",
+      "title": "10 海岸灯塔—11 检查点",
+      "start": 858.0,
+      "end": 977.6,
+      "type": "stage",
+      "bounds_xz": [
+        299,
+        5,
+        485,
+        98
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 39624,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1588,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 12,
+      "file": "12_11 检查点—12 跃浪水闸.png",
+      "title": "11 检查点—12 跃浪水闸",
+      "start": 977.6,
+      "end": 1066.0,
+      "type": "stage",
+      "bounds_xz": [
+        412,
+        25,
+        494,
+        184
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 30338,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1682,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 13,
+      "file": "13_12 跃浪水闸—13 检查点.png",
+      "title": "12 跃浪水闸—13 检查点",
+      "start": 1066.0,
+      "end": 1180.4,
+      "type": "stage",
+      "bounds_xz": [
+        421,
+        111,
+        494,
+        299
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 20244,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1048,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 14,
+      "file": "14_13 检查点—14 检查点.png",
+      "title": "13 检查点—14 检查点",
+      "start": 1180.4,
+      "end": 1258.4,
+      "type": "stage",
+      "bounds_xz": [
+        421,
+        226,
+        494,
+        377
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 16610,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.0933,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 15,
+      "file": "15_14 检查点—15 雪林回环.png",
+      "title": "14 检查点—15 雪林回环",
+      "start": 1258.4,
+      "end": 1367.6000000000001,
+      "type": "stage",
+      "bounds_xz": [
+        418,
+        304,
+        494,
+        486
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 22324,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1212,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 16,
+      "file": "16_15 雪林回环—16 冰川货运.png",
+      "title": "15 雪林回环—16 冰川货运",
+      "start": 1367.6000000000001,
+      "end": 1440.4,
+      "type": "stage",
+      "bounds_xz": [
+        357,
+        413,
+        491,
+        515
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 33043,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1633,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 17,
+      "file": "17_16 冰川货运—17 检查点.png",
+      "title": "16 冰川货运—17 检查点",
+      "start": 1440.4,
+      "end": 1580.8,
+      "type": "stage",
+      "bounds_xz": [
+        217,
+        442,
+        430,
+        515
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 38240,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1508,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 18,
+      "file": "18_17 检查点—18 松林回头弯.png",
+      "title": "17 检查点—18 松林回头弯",
+      "start": 1580.8,
+      "end": 1690.0,
+      "type": "stage",
+      "bounds_xz": [
+        130,
+        442,
+        290,
+        557
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 27922,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1132,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 19,
+      "file": "19_18 松林回头弯—19 最后补给.png",
+      "title": "18 松林回头弯—19 最后补给",
+      "start": 1690.0,
+      "end": 1768.0,
+      "type": "stage",
+      "bounds_xz": [
+        130,
+        484,
+        203,
+        635
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 16465,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.0954,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 20,
+      "file": "20_19 最后补给—曲水连弯 1.png",
+      "title": "19 最后补给—曲水连弯 1",
+      "start": 1768.0,
+      "end": 1898.0,
+      "type": "stage",
+      "bounds_xz": [
+        130,
+        562,
+        217,
+        762
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 27461,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1139,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 21,
+      "file": "21_曲水连弯 1—曲水连弯 2.png",
+      "title": "曲水连弯 1—曲水连弯 2",
+      "start": 1898.0,
+      "end": 2028.0,
+      "type": "stage",
+      "bounds_xz": [
+        144,
+        689,
+        344,
+        775
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 36080,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1389,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 22,
+      "file": "22_曲水连弯 2—曲水连弯 3.png",
+      "title": "曲水连弯 2—曲水连弯 3",
+      "start": 2028.0,
+      "end": 2158.0,
+      "type": "stage",
+      "bounds_xz": [
+        271,
+        702,
+        474,
+        775
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 28652,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1797,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 23,
+      "file": "23_曲水连弯 3—曲水连弯 4.png",
+      "title": "曲水连弯 3—曲水连弯 4",
+      "start": 2158.0,
+      "end": 2259.0544122211663,
+      "type": "stage",
+      "bounds_xz": [
+        401,
+        702,
+        536,
+        828
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 27810,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1107,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 24,
+      "file": "24_曲水连弯 4—曲水连弯 5.png",
+      "title": "曲水连弯 4—曲水连弯 5",
+      "start": 2259.0544122211663,
+      "end": 2648.920633238399,
+      "type": "stage",
+      "bounds_xz": [
+        463,
+        755,
+        666,
+        972
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 89559,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1661,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 25,
+      "file": "25_曲水连弯 5—曲水连弯 6.png",
+      "title": "曲水连弯 5—曲水连弯 6",
+      "start": 2648.920633238399,
+      "end": 2678.0,
+      "type": "stage",
+      "bounds_xz": [
+        593,
+        726,
+        666,
+        828
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 13147,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.0776,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 26,
+      "file": "26_曲水连弯 6—曲水连弯 7.png",
+      "title": "曲水连弯 6—曲水连弯 7",
+      "start": 2678.0,
+      "end": 2808.0,
+      "type": "stage",
+      "bounds_xz": [
+        593,
+        609,
+        693,
+        799
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 30607,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1219,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 27,
+      "file": "27_曲水连弯 7—曲水连弯 8.png",
+      "title": "曲水连弯 7—曲水连弯 8",
+      "start": 2808.0,
+      "end": 2938.0,
+      "type": "stage",
+      "bounds_xz": [
+        620,
+        608,
+        810,
+        707
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 38804,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1341,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 28,
+      "file": "28_曲水连弯 8—曲水连弯 9.png",
+      "title": "曲水连弯 8—曲水连弯 9",
+      "start": 2938.0,
+      "end": 3048.7024749076677,
+      "type": "stage",
+      "bounds_xz": [
+        737,
+        634,
+        811,
+        818
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 30886,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1703,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 29,
+      "file": "29_曲水连弯 9—曲水连弯 10.png",
+      "title": "曲水连弯 9—曲水连弯 10",
+      "start": 3048.7024749076677,
+      "end": 3442.8381705323136,
+      "type": "stage",
+      "bounds_xz": [
+        738,
+        745,
+        981,
+        952
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 78548,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1777,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 30,
+      "file": "30_曲水连弯 10—曲水连弯 11.png",
+      "title": "曲水连弯 10—曲水连弯 11",
+      "start": 3442.8381705323136,
+      "end": 3458.0,
+      "type": "stage",
+      "bounds_xz": [
+        908,
+        744,
+        995,
+        823
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 12391,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1052,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 31,
+      "file": "31_曲水连弯 11—曲水连弯 12.png",
+      "title": "曲水连弯 11—曲水连弯 12",
+      "start": 3458.0,
+      "end": 3588.0,
+      "type": "stage",
+      "bounds_xz": [
+        922,
+        743,
+        1125,
+        817
+      ],
+      "y_range": [
+        48,
+        172
+      ],
+      "exposed_faces": 31320,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1139,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 32,
+      "file": "32_曲水连弯 12—盘山水路 13.png",
+      "title": "曲水连弯 12—盘山水路 13",
+      "start": 3588.0,
+      "end": 3677.9115674608333,
+      "type": "stage",
+      "bounds_xz": [
+        1052,
+        744,
+        1215,
+        823
+      ],
+      "y_range": [
+        48,
+        218
+      ],
+      "exposed_faces": 38095,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1236,
+      "camera_quarter_turns": 2
+    },
+    {
+      "number": 33,
+      "file": "33_盘山水路 13—盘山水路 15.png",
+      "title": "盘山水路 13—盘山水路 15",
+      "start": 3677.9115674608333,
+      "end": 3957.9115674608333,
+      "type": "stage",
+      "bounds_xz": [
+        1142,
+        750,
+        1323,
+        1050
+      ],
+      "y_range": [
+        48,
+        218
+      ],
+      "exposed_faces": 149241,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.2479,
+      "camera_quarter_turns": 3
+    },
+    {
+      "number": 34,
+      "file": "34_盘山水路 15—盘山水路 16.png",
+      "title": "盘山水路 15—盘山水路 16",
+      "start": 3957.9115674608333,
+      "end": 4097.911567460833,
+      "type": "stage",
+      "bounds_xz": [
+        1119,
+        977,
+        1305,
+        1122
+      ],
+      "y_range": [
+        48,
+        218
+      ],
+      "exposed_faces": 75613,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.211,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 35,
+      "file": "35_盘山水路 16—盘山水路 18.png",
+      "title": "盘山水路 16—盘山水路 18",
+      "start": 4097.911567460833,
+      "end": 4377.911567460833,
+      "type": "stage",
+      "bounds_xz": [
+        983,
+        846,
+        1192,
+        1122
+      ],
+      "y_range": [
+        48,
+        218
+      ],
+      "exposed_faces": 149165,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.2535,
+      "camera_quarter_turns": 1
+    },
+    {
+      "number": 36,
+      "file": "36_盘山水路 18—山巅终点.png",
+      "title": "盘山水路 18—山巅终点",
+      "start": 4377.911567460833,
+      "end": 4627.782768224334,
+      "type": "stage",
+      "bounds_xz": [
+        989,
+        751,
+        1270,
+        919
+      ],
+      "y_range": [
+        48,
+        218
+      ],
+      "exposed_faces": 128065,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.2354,
+      "camera_quarter_turns": 2
+    },
+    {
+      "number": 37,
+      "file": "37_山巅终点—终点港池.png",
+      "title": "山巅终点—终点港池",
+      "start": 4627.782768224334,
+      "end": 4655.782768224334,
+      "type": "stage",
+      "bounds_xz": [
+        1197,
+        765,
+        1355,
+        910
+      ],
+      "y_range": [
+        48,
+        218
+      ],
+      "exposed_faces": 61983,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.1856,
+      "camera_quarter_turns": 3
+    },
+    {
+      "number": 38,
+      "file": "38_岩壁隧道_1_剖视.png",
+      "title": "岩壁隧道_1_剖视",
+      "start": 3772.9115674608333,
+      "end": 3867.9115674608333,
+      "type": "cutaway",
+      "bounds_xz": [
+        1227,
+        809,
+        1314,
+        956
+      ],
+      "y_range": [
+        61,
+        73
+      ],
+      "exposed_faces": 18929,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.0929,
+      "camera_quarter_turns": 3
+    },
+    {
+      "number": 39,
+      "file": "39_涵洞_2_剖视.png",
+      "title": "涵洞_2_剖视",
+      "start": 3972.9115674608333,
+      "end": 4037.9115674608333,
+      "type": "cutaway",
+      "bounds_xz": [
+        1185,
+        998,
+        1289,
+        1099
+      ],
+      "y_range": [
+        68,
+        79
+      ],
+      "exposed_faces": 15154,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.0811,
+      "camera_quarter_turns": 0
+    },
+    {
+      "number": 40,
+      "file": "40_岩壁隧道_3_剖视.png",
+      "title": "岩壁隧道_3_剖视",
+      "start": 4202.911567460833,
+      "end": 4307.911567460833,
+      "type": "cutaway",
+      "bounds_xz": [
+        994,
+        923,
+        1089,
+        1077
+      ],
+      "y_range": [
+        75,
+        88
+      ],
+      "exposed_faces": 16467,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.0987,
+      "camera_quarter_turns": 1
+    },
+    {
+      "number": 41,
+      "file": "41_涵洞_4_剖视.png",
+      "title": "涵洞_4_剖视",
+      "start": 4452.911567460833,
+      "end": 4517.911567460833,
+      "type": "cutaway",
+      "bounds_xz": [
+        1041,
+        764,
+        1154,
+        851
+      ],
+      "y_range": [
+        84,
+        95
+      ],
+      "exposed_faces": 10840,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.0795,
+      "camera_quarter_turns": 2
+    },
+    {
+      "number": 42,
+      "file": "42_雪冠火山口湖.png",
+      "title": "雪冠火山口湖",
+      "start": 4627.782768224334,
+      "end": 4655.782768224334,
+      "type": "crater",
+      "bounds_xz": [
+        1055,
+        852,
+        1212,
+        1008
+      ],
+      "y_range": [
+        154,
+        218
+      ],
+      "exposed_faces": 31731,
+      "pixels": [
+        2304,
+        1536
+      ],
+      "blocks_per_pixel": 0.0964,
+      "camera_quarter_turns": 0
+    }
+  ]
+}

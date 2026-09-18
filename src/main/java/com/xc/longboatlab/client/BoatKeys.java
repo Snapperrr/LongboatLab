@@ -14,7 +14,7 @@ import org.lwjgl.glfw.GLFW;
 import static com.xc.longboatlab.BoatControlPayload.*;
 
 public final class BoatKeys {
-    private static KeyBinding mode, hook, boost, up, down, left, right, hud, hudScale;
+    private static KeyBinding mode, hook, boost, up, down, left, right, hud, hudScale, waterGraph, rearCamera;
     private static final KeyBinding[] jets=new KeyBinding[5];
     private static boolean jumpWasDown;
     private static float fov, previousFov;
@@ -29,6 +29,8 @@ public final class BoatKeys {
         mode = key("mode", GLFW.GLFW_KEY_R);
         hud = key("hud", GLFW.GLFW_KEY_H);
         hudScale = key("hud_scale", GLFW.GLFW_KEY_J);
+        waterGraph = key("water_graph", GLFW.GLFW_KEY_F8);
+        rearCamera = key("rear_camera", GLFW.GLFW_KEY_F7);
         hook = key("hook", GLFW.GLFW_KEY_G);
         boost = key("boost", GLFW.GLFW_KEY_LEFT_ALT);
         jets[0]=key("jet_bottom",GLFW.GLFW_KEY_KP_5); jets[1]=key("jet_stern",GLFW.GLFW_KEY_KP_2);
@@ -53,8 +55,15 @@ public final class BoatKeys {
         BoatExhaust.tick(client);
         GiantOarAnimation.tick(client);
         CableRenderer.tick(client);
+        RearCamera.tick(client);
         if (take(hud) && client.currentScreen == null) BoatHud.toggle();
         if (take(hudScale) && client.currentScreen == null) BoatHud.cycleScale();
+        if (take(waterGraph) && client.currentScreen == null && client.world != null)
+            client.setScreen(new com.xc.longboatlab.client.water.WaterGraphScreen());
+        if (take(rearCamera) && client.currentScreen == null) {
+            if(net.minecraft.client.gui.screen.Screen.hasShiftDown()) RearCamera.recenter(client);
+            else RearCamera.toggle(client);
+        }
         take(boost);
         for(var jet:jets)take(jet);
         int actions = (take(mode) ? TOGGLE : 0) | (take(hook) ? HOOK : 0);
@@ -88,6 +97,7 @@ public final class BoatKeys {
     }
 
     public static double fovBoost(float tickDelta) {
+        if(RearCamera.active())return 0;
         MinecraftClient client = MinecraftClient.getInstance();
         return (previousFov + (fov - previousFov) * tickDelta) * client.options.getFovEffectScale().getValue();
     }

@@ -104,6 +104,8 @@ public final class BoatExhaust {
     private static void render(BoatEntity boat, float delta, float yaw, double half,
                                MatrixStack matrices, VertexConsumerProvider consumers) {
         var client = MinecraftClient.getInstance();
+        float density = ClientJetSettings.density();
+        if (density <= 0) return;
         boolean firing = ((BoatAccess) boat).longboat$visualState().getInt("Boost") > 0;
         if (client.world == null || (!firing && !HISTORY.containsKey(boat))) return;
         Vec3d position = BoatBody.visualPosition(boat,delta);
@@ -129,14 +131,24 @@ public final class BoatExhaust {
         }
         var mounts = emitters.mounts;
         double[] lengths = emitters.lengths, widths = emitters.widths;
-        var vertices = consumers.getBuffer(BoatEffectRenderPass.layer(TEXTURE, true));
+        var vertices = consumers.getBuffer(BoatEffectRenderPass.softLayer(TEXTURE));
         int beads = switch (client.options.getParticles().getValue()) {
             case MINIMAL -> 6;
             case DECREASED -> 10;
             default -> 14;
         };
+        // Scale moving samples only; keep the mouth cores and the default 1x appearance unchanged.
+        beads = 2 + Math.max(1, Math.round((beads - 2) * density));
         int movingBeads = beads - 2;
         double cycle = (current.time * movingBeads / TRAIL_TICKS) % 1;
+        var inverseCamera = new org.joml.Quaternionf(camera.getRotation()).conjugate();
+        var wispRotation = new org.joml.Quaternionf();
+        var viewAxis = new org.joml.Vector3f();
+        double[] flowAngles = new double[PufferGrid.FACES];
+        float[] stretches = new float[PufferGrid.FACES];
+        Vec3d[] spreadSides = new Vec3d[PufferGrid.FACES], spreadUps = new Vec3d[PufferGrid.FACES];
+        int segments = ((BoatAccess) boat).longboat$segments();
+        double densityFade = 1 / Math.sqrt(Math.max(1, density));
         for (int bead = beads - 1; bead >= 0; bead--) {
             boolean nozzleCore=bead<2;
             // Constant-age particles slow into a four-tick terminal cloud, then dissipate.
@@ -152,13 +164,26 @@ public final class BoatExhaust {
             Vec3d yAxis = BoatBody.direction(new Vec3d(0, 1, 0), angle, source.pitch, source.roll);
             Vec3d zAxis = BoatBody.direction(new Vec3d(0, 0, 1), angle, source.pitch, source.roll);
             Vec3d[] outwardFaces = {yAxis.multiply(-1), zAxis.multiply(-1), zAxis, xAxis, xAxis.multiply(-1)};
+            // Five nozzle directions per age band, not another quaternion per attached fish.
+            for (int face = 0; face < PufferGrid.FACES; face++) {
+                if ((source.faces & (1 << face)) == 0) continue;
+                Vec3d outward = outwardFaces[face];
+                viewAxis.set((float) outward.x, (float) outward.y, (float) outward.z).rotate(inverseCamera);
+                flowAngles[face] = Math.atan2(viewAxis.y, viewAxis.x);
+                stretches[face] = nozzleCore ? 1 : 1.25f + (float) Math.hypot(viewAxis.x, viewAxis.y) * 0.65f;
+                if (dwell > 0) {
+                    spreadSides[face] = outward.crossProduct(Math.abs(outward.y) > 0.9
+                            ? new Vec3d(1, 0, 0) : new Vec3d(0, 1, 0)).normalize();
+                    spreadUps[face] = outward.crossProduct(spreadSides[face]);
+                }
+            }
+            float sourceExtension = segments <= 1 ? extension : (float) ((source.half - 1) / (segments - 1));
             double fade = Math.min(1, delay / 0.5) * Math.min(1, (TRAIL_TICKS - delay) / 2);
-            int alpha = nozzleCore ? 150 : (int) ((128 - 25 * progress - 20 * dwell) * fade);
+            // Distribute opacity across overlapping wisps instead of opaque round beads.
+            int alpha = nozzleCore ? 85 : (int) ((96 - 24 * progress - 22 * dwell) * fade*densityFade);
             for (var mount : mounts) {
                 if((source.faces & (1<<mount.face()))==0)continue;
-                float size = (float) ((nozzleCore ? 0.22 : 0.28 + progress * 0.42 + dwell * 0.16) * widths[mount.face()]);
-                int segments = ((BoatAccess) boat).longboat$segments();
-                float sourceExtension = segments <= 1 ? extension : (float) ((source.half - 1) / (segments - 1));
+                float size = (float) ((nozzleCore ? 0.20 : 0.26 + progress * 0.40 + dwell * 0.25) * widths[mount.face()]);
                 Vec3d mouth = PufferAttachments.mouth(boat, mount, sourceExtension);
                 // Position and direction use the same emission-time frame. The direction is a vector, not a pivoted point.
                 Vec3d outward = outwardFaces[mount.face()];
@@ -168,27 +193,28 @@ public final class BoatExhaust {
                         .add(source.motion.multiply(delay));
                 if (dwell > 0) {
                     // Spread the terminal cloud instead of stacking several opaque discs at one point.
-                    Vec3d side = outward.crossProduct(Math.abs(outward.y) > 0.9 ? new Vec3d(1,0,0) : new Vec3d(0,1,0)).normalize();
-                    Vec3d up = outward.crossProduct(side);
                     double phase = source.time * 2.39996 + mount.index() * 0.73 + mount.segment() * 0.37;
-                    world = world.add(side.multiply(Math.cos(phase) * dwell * 0.45 * widths[mount.face()]))
-                            .add(up.multiply(Math.sin(phase) * dwell * 0.45 * widths[mount.face()]));
+                    world = world.add(spreadSides[mount.face()].multiply(Math.cos(phase) * dwell * 0.45 * widths[mount.face()]))
+                            .add(spreadUps[mount.face()].multiply(Math.sin(phase) * dwell * 0.45 * widths[mount.face()]));
                 }
                 if (world.squaredDistanceTo(camera.getPos()) > 64 * 64) continue;
                 Vec3d relative = world.subtract(position);
+                // Project the nozzle into camera space; stretch the wisp along the flow.
+                double phase=source.time*0.33+mouth.x*7.1+mouth.y*3.7+mouth.z*2.9;
                 matrices.push();
                 matrices.translate(relative.x, relative.y, relative.z);
                 matrices.multiply(camera.getRotation());
-                quad(vertices, matrices.peek(), size, alpha, 0xF000F0);
+                matrices.multiply(wispRotation.rotationZ((float)(flowAngles[mount.face()]+Math.sin(phase)*0.20)));
+                quad(vertices, matrices.peek(), size*stretches[mount.face()], size*0.78f, alpha, 0xF000F0);
                 matrices.pop();
             }
         }
     }
-    private static void quad(VertexConsumer vertices, MatrixStack.Entry entry, float size, int alpha, int light) {
-        vertex(vertices, entry, -size, -size, 0, 1, alpha, light);
-        vertex(vertices, entry, size, -size, 1, 1, alpha, light);
-        vertex(vertices, entry, size, size, 1, 0, alpha, light);
-        vertex(vertices, entry, -size, size, 0, 0, alpha, light);
+    private static void quad(VertexConsumer vertices, MatrixStack.Entry entry, float width, float height, int alpha, int light) {
+        vertex(vertices, entry, -width, -height, 0, 1, alpha, light);
+        vertex(vertices, entry, width, -height, 1, 1, alpha, light);
+        vertex(vertices, entry, width, height, 1, 0, alpha, light);
+        vertex(vertices, entry, -width, height, 0, 0, alpha, light);
     }
     private static void vertex(VertexConsumer vertices, MatrixStack.Entry entry, float x, float y, float u, float v, int alpha, int light) {
         vertices.vertex(entry.getPositionMatrix(), x, y, 0).color(255, 255, 255, alpha).texture(u, v)

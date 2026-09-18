@@ -1,0 +1,14 @@
+{
+  "version": "0.10.19",
+  "width_geometry_and_uv_cases": 96,
+  "native_pixels_per_block": 16,
+  "original_width_geometry_preserved": true,
+  "sidewall_thickness_preserved": true,
+  "divider_contacts_preserved": true,
+  "periodic_wood_atlases_checked": 9,
+  "dimension_cache_bounded": true,
+  "shared_item_and_entity_renderer_source_checked": true,
+  "java_compiled": false,
+  "minecraft_launched": false,
+  "in_game_visuals_verified": false
+}

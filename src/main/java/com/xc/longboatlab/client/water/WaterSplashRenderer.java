@@ -21,12 +21,13 @@ final class WaterSplashRenderer {
     // turn one side's lighting normal downward; retain lightmap lighting with a shared up normal.
     private static final Vec3d LIGHT_NORMAL = new Vec3d(0, 1, 0);
     private static final Identifier SHEET = texture("impact_sheet"), FOAM = texture("foam"),
-            DROP = texture("drop"), MIST = texture("mist"), RIBBON = texture("ribbon"), FROTH = texture("froth"), LACE = texture("wake_lace");
+            DROP = texture("drop"), MIST = texture("vapor"), RIBBON = texture("ribbon"), FROTH = texture("froth"), LACE = texture("wake_lace");
     private static final int MAX_SHEETS = 16, MAX_DROPS = 384, MAX_MIST = 192, MAX_RIPPLES = 48;
     private static final int WAKE_LIFE = 92;
-    private static final double WAKE_WIDTH = 0.42, WAKE_WIDTH_GAIN = 0.28;
+    private static final double WAKE_WIDTH = 0.60, WAKE_WIDTH_GAIN = 0.40;
     private static final double WAKE_TEXTURE_SCALE = 0.35;
     private static final double MAX_WAKE_SPRAY_SPEED = 0.22;
+    private static final double DROP_GRAVITY = 0.045, MIST_SETTLING = 0.0024;
     private final List<Sheet> sheets = new ArrayList<>();
     private final List<Fleck> drops = new ArrayList<>(), mist = new ArrayList<>();
     private final List<Ripple> ripples = new ArrayList<>();
@@ -41,6 +42,11 @@ final class WaterSplashRenderer {
         return Identifier.of("longboatlab", "textures/water/" + name + ".png");
     }
     void clear() { sheets.clear(); drops.clear(); mist.clear(); ripples.clear(); wakes.clear(); wakeHeads.clear(); hullRibbons.clear(); clock = 0; }
+    record Counts(int hullStrips, int wakeStrips, int splashes, int drops, int mist, int ripples) {}
+    Counts counts() {
+        return new Counts(hullRibbons.values().stream().mapToInt(h -> h.strips.size()).sum(),
+                wakes.size(), sheets.size(), drops.size(), mist.size(), ripples.size());
+    }
     private static int quality(MinecraftClient client) {
         return switch (client.options.getParticles().getValue()) { case MINIMAL -> 1; case DECREASED -> 2; default -> 3; };
     }
@@ -132,15 +138,16 @@ final class WaterSplashRenderer {
             Vec3d out = a.outward.lerp(b.outward, t).normalize();
             if (out.lengthSquared() < 0.5) continue;
             boolean fog = (i + clock) % 3 == 0;
-            if (fog && mist.size() >= MAX_MIST * quality / 3) fog = false;
-            if (!fog && drops.size() >= MAX_DROPS * quality / 3) fog = true;
+            // Never substitute a long-lived vapor puff for a ballistic drop when a pool fills.
+            // Those substitutions formerly left bead-like "droplets" hovering over the wake.
             List<Fleck> pool = fog ? mist : drops;
             if (pool.size() >= (fog ? MAX_MIST : MAX_DROPS) * quality / 3) continue;
-            double across = 0.63 + random.nextDouble() * 0.18;
+            double across = MathHelper.lerp(t, WakeProfile.crest(a.phase), WakeProfile.crest(b.phase))
+                    + (random.nextDouble() - 0.5) * 0.12;
             Vec3d at = a.point(across, 1, false).lerp(b.point(across, 1, false), t).add(0, 0.025, 0);
             Vec3d velocity = wakeVelocity(a.relativeMotion.lerp(b.relativeMotion, t),
                     a.waterFlow.lerp(b.waterFlow, t), out, power, fog, random.nextDouble() * 2 - 1);
-            Fleck fleck = new Fleck(at, velocity, fog ? 0.028 + random.nextDouble() * 0.024
+            Fleck fleck = new Fleck(at, velocity, fog ? 0.16 + random.nextDouble() * 0.12
                     : 0.004 + random.nextDouble() * 0.006, fog, a.appearance);
             // The birth frame follows the interpolated crest, not its next-tick position.
             // Subsequent ticks are independent world-space flight.
@@ -156,7 +163,7 @@ final class WaterSplashRenderer {
         double age = Math.max(a.released < 0 ? 0 : clock - a.released, b.released < 0 ? 0 : clock - b.released);
         if (!live) fade *= 0.18 * Math.max(0, 1 - age / 18);
         double weight = Math.min(4, a.inner.distanceTo(b.inner)) * Math.max(0, power - 0.12)
-                * (a.entry + b.entry) * 0.5 * fade;
+                * (a.entry + b.entry) * 0.5 * fade * (0.18 + 0.82 * (a.breaking + b.breaking) * 0.5);
         if (weight <= 0.001) return total;
         sources.add(new SpraySource(span, total + weight));
         return total + weight;
@@ -177,7 +184,7 @@ final class WaterSplashRenderer {
         double eject = Math.min(0.17, 0.035 + power * 0.060 + Math.max(0, intoWater) * 0.08)
                 * (fog ? 0.60 : 1) * (0.9 + Math.abs(scatter) * 0.2);
         Vec3d jitter = new Vec3d(-out.z, 0, out.x).multiply(Math.min(0.008, along.length() * 0.03) * scatter);
-        double lift = Math.min(0.17, 0.06 + power * 0.09) * (fog ? 0.60 : 1) * (1 + scatter * 0.22);
+        double lift = Math.min(0.17, 0.06 + power * 0.09) * (fog ? 0.16 : 1) * (1 + scatter * 0.22);
         Vec3d spray = drift.add(out.multiply(eject)).add(jitter).add(0, lift, 0);
         double magnitude = spray.length();
         // Fine crest spray stays on the inexpensive collision path, even on debug-speed boats.
@@ -203,7 +210,7 @@ final class WaterSplashRenderer {
         }
         if (wake && impact.wakeSide() != 0) addWake(impact, appearance, quality);
         else addRipple(impact.position(), impact.strength(), false, appearance, quality);
-        int count = (int) ((wake ? Math.max(0, impact.strength() - 0.45) * 2 : 5 + impact.strength() * 5) * quality);
+        int count = (int) ((wake ? Math.max(0, impact.strength() - 0.45) * 2 : 7 + impact.strength() * 7) * quality);
         Vec3d normal = impact.surfaceNormal();
         Vec3d tangent = impact.velocity().subtract(normal.multiply(impact.velocity().dotProduct(normal)));
         Vec3d outward = impact.hullNormal().subtract(normal.multiply(impact.hullNormal().dotProduct(normal))).normalize();
@@ -295,7 +302,8 @@ final class WaterSplashRenderer {
             }
             node.speed = contact.tangentSpeed();
             node.relativeMotion = contact.velocity(); node.waterFlow = contact.waterFlow();
-            node.attach(inner, outer, out, strength, entry, contact.velocity().dotProduct(flowAxis));
+            double pressure = WakeProfile.pressure(Math.abs(station - leading), contact.velocity().dotProduct(out));
+            node.attach(inner, outer, out, strength, entry, pressure, contact.velocity().dotProduct(flowAxis));
             nodes.put(station, node);
             if (preceding != null) strips.add(new WakeStrip(preceding, node));
             preceding = node;
@@ -321,7 +329,9 @@ final class WaterSplashRenderer {
         HullRibbon hull = hullRibbons.get(key);
         if (hull != null && clock - hull.seen <= 2) return;
         WakeNode head = new WakeNode(impact, appearance);
-        head.amplitude = head.previousAmplitude = 0.14 + impact.strength() * 0.70;
+        double width = head.inner.distanceTo(head.outer);
+        head.amplitude = head.previousAmplitude = WakeProfile.amplitude(impact.strength(), 1, 1, width);
+        head.breaking = head.previousBreaking = WakeProfile.breaking(head.amplitude, width, head.strength);
         head.alpha = head.previousAlpha = 175 * Math.min(1, 0.25 + impact.strength() * 0.8);
         head.release();
         WakeNode prior = wakeHeads.put(key, head);
@@ -333,8 +343,9 @@ final class WaterSplashRenderer {
     private final class WakeNode {
         Vec3d origin, outward, inner, outer, previousInner, previousOuter, relativeMotion, waterFlow;
         double strength, amplitude, previousAmplitude, alpha, previousAlpha, visibility = 1;
+        double breaking, previousBreaking, releasedBreaking;
         double releasedAmplitude, releasedAlpha, surfaceY, speed, phase, previousPhase, entry = 1;
-        final Vec3d[] frameCurve=new Vec3d[13];
+        final Vec3d[] frameCurve=new Vec3d[WakeProfile.SAMPLES+1];
         int curveClock=-1;float curveDelta=-1;
         int seen = clock, released = -1, advanced = clock;
         final Appearance appearance;
@@ -352,10 +363,12 @@ final class WaterSplashRenderer {
             previousInner = prior.previousInner; previousOuter = prior.previousOuter;
             amplitude = prior.amplitude; previousAmplitude = prior.previousAmplitude;
             alpha = prior.alpha; previousAlpha = prior.previousAlpha;
+            breaking = prior.breaking; previousBreaking = prior.previousBreaking;
             visibility = prior.visibility; surfaceY = prior.surfaceY; entry = prior.entry;
             phase = prior.phase; previousPhase = prior.previousPhase;
         }
-        void attach(Vec3d nextInner, Vec3d nextOuter, Vec3d out, double power, double entryRamp, double alongMotion) {
+        void attach(Vec3d nextInner, Vec3d nextOuter, Vec3d out, double power, double entryRamp,
+                    double pressure, double alongMotion) {
             released = -1; seen = clock; outward = out; strength = power; entry = entryRamp;
             // Texture phase is continuous through release and shared by both sides of each seam.
             // A stable local-Z texture axis and signed water-relative travel make both gunwales
@@ -366,13 +379,17 @@ final class WaterSplashRenderer {
             inner = new Vec3d(nextInner.x, MathHelper.lerp(0.35, inner.y, nextInner.y), nextInner.z);
             outer = new Vec3d(nextOuter.x, MathHelper.lerp(0.35, outer.y, nextOuter.y), nextOuter.z);
             surfaceY = nextOuter.y;
-            amplitude += ((0.10 + power * 0.56) * entryRamp - amplitude) * 0.25;
+            double width = nextInner.distanceTo(nextOuter);
+            double targetHeight = WakeProfile.amplitude(power, entryRamp, pressure, width);
+            amplitude += (targetHeight - amplitude) * 0.25;
+            breaking += (WakeProfile.breaking(targetHeight, width, power) * entryRamp - breaking) * 0.25;
             alpha += (175 * Math.min(1, 0.25 + power * 0.8) * entryRamp - alpha) * 0.25;
         }
         void release() {
             if (released >= 0) return;
             released = clock;
             releasedAmplitude = amplitude; releasedAlpha = alpha;
+            releasedBreaking = breaking;
         }
         boolean expired() { return released >= 0 && clock - released > WAKE_LIFE; }
         void tick(MinecraftClient client) {
@@ -380,6 +397,7 @@ final class WaterSplashRenderer {
             advanced = clock;
             previousInner = inner; previousOuter = outer;
             previousAmplitude = amplitude; previousAlpha = alpha; previousPhase = phase;
+            previousBreaking = breaking;
             if (released < 0) return;
             double age = clock - released;
             double fade = (1 - smooth(age / WAKE_LIFE)) / Math.sqrt(1 + age * 0.04);
@@ -400,46 +418,56 @@ final class WaterSplashRenderer {
             inner = new Vec3d(nextInner.x, MathHelper.lerp(0.25, inner.y, surfaceY), nextInner.z);
             outer = new Vec3d(nextOuter.x, MathHelper.lerp(0.25, outer.y, surfaceY), nextOuter.z);
             amplitude = releasedAmplitude * Math.exp(-age * 0.052) * (1-smooth(age/WAKE_LIFE));
+            breaking = releasedBreaking * Math.exp(-age * 0.065);
             double targetAlpha = releasedAlpha * fade * visibility;
             alpha = visibility == 0 ? alpha * 0.65 : targetAlpha;
         }
 
         Vec3d point(double across, float delta, boolean flat) {
-            int sample=(int)Math.round(across*12);
-            boolean cached=!flat && sample>=0 && sample<=12 && Math.abs(across-sample/12.0)<1.0e-8;
-            if(cached) {
-                if(curveClock!=clock || curveDelta!=delta) {
-                    Arrays.fill(frameCurve,null);curveClock=clock;curveDelta=delta;
-                }
-                if(frameCurve[sample]!=null)return frameCurve[sample];
+            across = MathHelper.clamp(across, 0, 1);
+            if (!flat) {
+                prepareCurve(delta);
+                double sample = across * WakeProfile.SAMPLES;
+                int lower = Math.min(WakeProfile.SAMPLES - 1, (int) sample);
+                // Foam and spray use the exact tessellated water surface, not a separate
+                // analytic arc that can cut into it between the mesh vertices.
+                double fraction = sample - lower;
+                if (fraction < 1.0e-8) return frameCurve[lower];
+                if (fraction > 1 - 1.0e-8) return frameCurve[lower + 1];
+                return frameCurve[lower].lerp(frameCurve[lower + 1], fraction);
             }
             Vec3d a = previousInner.lerp(inner, delta), b = previousOuter.lerp(outer, delta);
-            // An asymmetric shoaling face and a thin falling lip, instead of a symmetric plastic ridge.
-            double profile = across < 0.68 ? smooth(across / 0.68)
-                    : Math.pow(Math.max(0,1-(across-0.68)/0.32),1.65);
-            double h = flat ? 0 : MathHelper.lerp(delta, previousAmplitude, amplitude);
             double time = clock - 1 + delta;
-            double wavePhase=MathHelper.lerp(delta, previousPhase, phase)*Math.PI*2;
-            double ruffle=Math.sin(wavePhase*1.7-time*0.13)*0.055+Math.sin(wavePhase*4.3-time*0.21)*0.024;
-            h *= 1+ruffle;
-            double curl=flat?0:Math.sin(Math.PI*across)*smooth((across-0.45)/0.28)
-                    * Math.min(0.14,h*0.26)*(0.8+ruffle);
-            if (flat && released >= 0) {
+            double h = 0, profile = 0;
+            if (released >= 0) {
                 double age = Math.max(0, time - released);
+                double wavePhase = MathHelper.lerp(delta, previousPhase, phase) * Math.PI * 2;
                 // Several wavelengths disperse at different rates; history stays at the actual turn.
                 profile = (Math.sin(across*Math.PI*3-Math.sqrt(age+1)*0.65)
                         +0.32*Math.sin(across*Math.PI*7-Math.sqrt(age+1)*1.1+wavePhase*0.12))*Math.sin(across*Math.PI);
                 h = releasedAmplitude * 0.26 * smooth(age / 12) * Math.exp(-age*0.028)*(1-smooth(age/WAKE_LIFE));
             }
-            Vec3d result=a.lerp(b, across).add(outward.multiply(curl)).add(0, profile * h, 0);
-            if(cached)frameCurve[sample]=result;
-            return result;
+            return a.lerp(b, across).add(0, profile * h, 0);
+        }
+        private void prepareCurve(float delta) {
+            if (curveClock == clock && curveDelta == delta) return;
+            curveClock = clock; curveDelta = delta;
+            Vec3d a = previousInner.lerp(inner, delta), b = previousOuter.lerp(outer, delta);
+            double p = MathHelper.lerp(delta, previousPhase, phase);
+            double crest = WakeProfile.crest(p);
+            double height = Math.min(a.distanceTo(b) * 0.34,
+                    MathHelper.lerp(delta, previousAmplitude, amplitude) * WakeProfile.modulation(p));
+            for (int i = 0; i <= WakeProfile.SAMPLES; i++) {
+                double across = i / (double) WakeProfile.SAMPLES;
+                frameCurve[i] = a.lerp(b, across).add(0, WakeProfile.height(across, crest) * height, 0);
+            }
         }
         double foamEdge(int band,boolean high,boolean flat,float delta) {
-            double t=clock-1+delta,p=MathHelper.lerp(delta,previousPhase,phase)*6.283;
-            double drift=0.025*Math.sin(p*1.3-t*0.08+band*2.1);
-            double center=flat?0.17+band*0.29:0.715;
-            double width=flat?0.13:0.095;
+            double p=MathHelper.lerp(delta,previousPhase,phase);
+            double amount=MathHelper.lerp(delta,previousBreaking,breaking);
+            double drift=flat?0.025*Math.sin(p*8.1-(clock-1+delta)*0.08+band*2.1):0;
+            double center=flat?0.17+band*0.29:band==0?WakeProfile.crest(p):0.865;
+            double width=flat?0.13:band==0?0.070+amount*0.045:0.115;
             return MathHelper.clamp(center+drift+(high?width:-width),0.01,0.99);
         }
         int opacity(float delta, boolean flat) {
@@ -461,21 +489,34 @@ final class WaterSplashRenderer {
         private void draw(float delta, MatrixStack.Entry matrix, VertexConsumer vertices, Vec3d camera, boolean foam, boolean flat) {
             int alphaA = a.opacity(delta, flat), alphaB = b.opacity(delta, flat);
             if ((alphaA | alphaB) <= 0) return;
-            int strips = foam ? (flat ? 3 : 1) : 12;
-            for (int i = 0; i < strips; i++) {
-                double lo = foam ? a.foamEdge(i,false,flat,delta) : i / 12.0;
-                double hi = foam ? a.foamEdge(i,true,flat,delta) : (i + 1) / 12.0;
-                Vec3d p0 = a.point(lo, delta, flat), p1 = b.point(foam?b.foamEdge(i,false,flat,delta):lo, delta, flat);
-                Vec3d p2 = b.point(foam?b.foamEdge(i,true,flat,delta):hi, delta, flat), p3 = a.point(hi, delta, flat);
+            if (foam && !flat) {
+                // Node-owned breaking intensity is shared with neighbouring spans and the
+                // released tail. Transparent texture islands, not per-span cutoffs, make gaps.
+                alphaA = (int) (alphaA * MathHelper.lerp(delta,a.previousBreaking,a.breaking));
+                alphaB = (int) (alphaB * MathHelper.lerp(delta,b.previousBreaking,b.breaking));
+                if ((alphaA | alphaB) <= 0) return;
+            }
+            int strips = foam ? (flat ? 3 : 2) : WakeProfile.SAMPLES;
+            int subdivisions=foam&&!flat?4:1;
+            for (int i = 0; i < strips; i++) for(int part=0;part<subdivisions;part++) {
+                double v0=part/(double)subdivisions,v1=(part+1.0)/subdivisions;
+                double alo=foam?a.foamEdge(i,false,flat,delta):i/(double)WakeProfile.SAMPLES;
+                double ahi=foam?a.foamEdge(i,true,flat,delta):(i+1)/(double)WakeProfile.SAMPLES;
+                double blo=foam?b.foamEdge(i,false,flat,delta):alo, bhi=foam?b.foamEdge(i,true,flat,delta):ahi;
+                double lo=MathHelper.lerp(v0,alo,ahi),hi=MathHelper.lerp(v1,alo,ahi);
+                // Shared nodes keep both the live hull ribbon and released wake watertight.
+                Vec3d p0 = a.point(lo, delta, flat), p1 = b.point(MathHelper.lerp(v0,blo,bhi), delta, flat);
+                Vec3d p2 = b.point(MathHelper.lerp(v1,blo,bhi), delta, flat), p3 = a.point(hi, delta, flat);
                 if (foam) { p0 = p0.add(0, 0.004, 0); p1 = p1.add(0, 0.004, 0); p2 = p2.add(0, 0.004, 0); p3 = p3.add(0, 0.004, 0); }
-                float whiten = foam ? 0.96f : 0.20f;
-                float au = (float) MathHelper.lerp(delta, a.previousPhase, a.phase)+i*(flat?0.31f:0);
-                float bu = (float) MathHelper.lerp(delta, b.previousPhase, b.phase)+i*(flat?0.31f:0);
-                double bodyFade=foam?1:0.70;
-                nodeVertex(vertices, matrix, p0.subtract(camera), au, foam ? 1 : (float) lo, a, whiten, (int)(alphaA*bodyFade));
-                nodeVertex(vertices, matrix, p1.subtract(camera), bu, foam ? 1 : (float) lo, b, whiten, (int)(alphaB*bodyFade));
-                nodeVertex(vertices, matrix, p2.subtract(camera), bu, foam ? 0 : (float) hi, b, whiten, (int)(alphaB*bodyFade));
-                nodeVertex(vertices, matrix, p3.subtract(camera), au, foam ? 0 : (float) hi, a, whiten, (int)(alphaA*bodyFade));
+                float whiten = foam ? 0.94f : 0.045f;
+                float offset = foam ? i * 0.41f : 0;
+                float au = (float) MathHelper.lerp(delta, a.previousPhase, a.phase)+offset;
+                float bu = (float) MathHelper.lerp(delta, b.previousPhase, b.phase)+offset;
+                double bodyFade=foam?(flat?1:i==0?1.80:1.10):0.85;
+                nodeVertex(vertices, matrix, p0.subtract(camera), au, foam ? (float)(1-v0) : (float) lo, a, whiten, (int)(alphaA*bodyFade));
+                nodeVertex(vertices, matrix, p1.subtract(camera), bu, foam ? (float)(1-v0) : (float) lo, b, whiten, (int)(alphaB*bodyFade));
+                nodeVertex(vertices, matrix, p2.subtract(camera), bu, foam ? (float)(1-v1) : (float) hi, b, whiten, (int)(alphaB*bodyFade));
+                nodeVertex(vertices, matrix, p3.subtract(camera), au, foam ? (float)(1-v1) : (float) hi, a, whiten, (int)(alphaA*bodyFade));
             }
         }
         private void nodeVertex(VertexConsumer vertices, MatrixStack.Entry matrix, Vec3d p, float u, float v,
@@ -495,136 +536,148 @@ final class WaterSplashRenderer {
         return u.multiply(Math.cos(angle)).add(v.multiply(Math.sin(angle)));
     }
 
+    /** Short-lived corrugated crown. Its rim atomizes; no persistent radial tubes. */
     private final class Sheet {
+        private static final double[] HEIGHTS = {0,0.2,0.3,0.4,0.6,0.8,0.9,1};
+        private static final int[] ROWS = {0,1,3,4,5,7};
         final Vec3d origin, normal;
         final Appearance appearance;
-        final Vec3d[] previous, crest, velocity, base, previousBase, radial;
-        final Vec3d[] frameBase, frameCrest, footprint;
-        final double[] lobe;
-        final boolean[] shed;
-        final double footprintRadius;
+        final Vec3d[] previous, crest, velocity, base, previousBase, radial, footprint;
+        final Vec3d[] frameBase, frameCrest;
+        final Vec3d[][] frameEdges, frameMids;
+        final double[] lobe, noise;
         final boolean[] alive, wet;
         final double strength;
-        final int life, seed;
-        final boolean wake;
+        final int life=22;
         int age;
         Sheet(WaterImpact hit, Appearance appearance, int segments) {
-            this.origin = hit.position(); this.normal = hit.surfaceNormal(); this.appearance = appearance;
-            wake = hit.kind() == WaterImpact.Kind.SKIM;
-            strength = hit.strength(); life = wake ? 16 : 24 + (int) (strength * 3);
-            seed = random.nextInt(10000);
-            previous = new Vec3d[segments]; crest = new Vec3d[segments]; velocity = new Vec3d[segments];
-            base = new Vec3d[segments]; previousBase = new Vec3d[segments]; radial = new Vec3d[segments];
-            frameBase = new Vec3d[segments]; frameCrest = new Vec3d[segments];
-            footprint = new Vec3d[segments]; lobe = new double[segments]; shed = new boolean[segments];
-            footprintRadius = MathHelper.clamp(Math.sqrt(hit.area()) * 0.52, 0.35, 1.8);
-            alive = new boolean[segments]; wet = new boolean[segments];
-            Vec3d tangent = hit.velocity().subtract(normal.multiply(hit.velocity().dotProduct(normal)));
-            Vec3d facing = hit.hullNormal().subtract(normal.multiply(hit.hullNormal().dotProduct(normal)));
-            Vec3d bias = tangent.multiply(0.5).add(facing.multiply(0.25)).normalize();
-            double grazing = MathHelper.clamp(hit.tangentSpeed() / (hit.normalSpeed() + 0.18) * 0.25, 0, 0.85);
-            for (int i = 0; i < segments; i++) {
-                double angle = Math.PI * 2 * i / segments;
-                Vec3d direction = radial(normal, angle);
-                // Vertical slap: radial crown. Grazing/tilted entry: forward/outboard ejecta dominate.
-                double directional = MathHelper.clamp(1 + grazing * direction.dotProduct(bias), 0.18, 1.85);
-                radial[i] = direction;
-                double finger = 0.5 + 0.5 * Math.sin(angle * 5 + seed * 0.1);
-                lobe[i] = 0.65 + 0.35 * finger;
-                double radius = footprintRadius * (1 + 0.22 * direction.dotProduct(tangent.normalize()));
-                footprint[i] = origin.add(direction.multiply(radius));
-                double eject = Math.sqrt(Math.max(0.01, hit.normalSpeed())) * 0.25;
-                velocity[i] = direction.multiply((0.13 + eject) * directional)
-                        .add(hit.waterFlow())
-                        .add(tangent.multiply(0.16))
-                        .add(normal.multiply((0.21 + eject * 1.1) * lobe[i] * Math.sqrt(directional)));
-                previous[i] = crest[i] = footprint[i].add(normal.multiply(0.025));
-                previousBase[i] = base[i] = footprint[i].add(normal.multiply(0.01));
-                alive[i] = wet[i] = true;
+            origin=hit.position();normal=hit.surfaceNormal();this.appearance=appearance;strength=hit.strength();
+            previous=new Vec3d[segments];crest=new Vec3d[segments];velocity=new Vec3d[segments];
+            base=new Vec3d[segments];previousBase=new Vec3d[segments];radial=new Vec3d[segments];
+            footprint=new Vec3d[segments];frameBase=new Vec3d[segments];frameCrest=new Vec3d[segments];
+            frameEdges=new Vec3d[segments][HEIGHTS.length];frameMids=new Vec3d[segments][HEIGHTS.length];
+            lobe=new double[segments];noise=new double[segments];alive=new boolean[segments];wet=new boolean[segments];
+            Vec3d tangent=hit.velocity().subtract(normal.multiply(hit.velocity().dotProduct(normal)));
+            if(tangent.length()>1.2)tangent=tangent.normalize().multiply(1.2);
+            Vec3d facing=hit.hullNormal().subtract(normal.multiply(hit.hullNormal().dotProduct(normal)));
+            Vec3d bias=tangent.multiply(0.5).add(facing.multiply(0.25)).normalize();
+            double grazing=MathHelper.clamp(hit.tangentSpeed()/(hit.normalSpeed()+0.18)*0.25,0,0.85);
+            double radius=MathHelper.clamp(Math.sqrt(hit.area())*0.46,0.30,1.65);
+            double eject=Math.sqrt(Math.min(1.5,Math.max(0.01,hit.normalSpeed())))*0.18;
+            double phase=random.nextDouble()*Math.PI*2;
+            for(int i=0;i<segments;i++) {
+                double angle=phase+Math.PI*2*(i+(random.nextDouble()-0.5)*0.65)/segments;
+                Vec3d direction=radial(normal,angle);radial[i]=direction;
+                noise[i]=random.nextDouble();lobe[i]=0.48+random.nextDouble()*0.52;
+                double directional=MathHelper.clamp(1+grazing*direction.dotProduct(bias),0.22,1.7);
+                footprint[i]=origin.add(direction.multiply(radius*(0.88+noise[i]*0.24)));
+                velocity[i]=direction.multiply((0.14+eject)*(0.8+noise[i]*0.5)*directional)
+                        .add(hit.waterFlow()).add(tangent.multiply(0.18))
+                        .add(normal.multiply((0.16+eject)*lobe[i]*Math.sqrt(directional)));
+                previous[i]=crest[i]=footprint[i].add(normal.multiply(0.028));
+                previousBase[i]=base[i]=footprint[i].add(normal.multiply(0.018));
+                alive[i]=wet[i]=true;
             }
         }
         boolean tick(MinecraftClient client) {
-            if (++age >= life) return false;
-            boolean any = false;
-            for (int i = 0; i < crest.length; i++) {
-                previous[i] = crest[i]; previousBase[i] = base[i];
-                if (!alive[i]) continue;
-                Vec3d target = crest[i].add(velocity[i]);
-                if (!clearPath(client, crest[i], target)) { alive[i] = false; continue; }
-                crest[i] = target;
-                velocity[i] = velocity[i].multiply(0.985).add(0, wake ? -0.018 : -0.028, 0);
-                if (waterQueriesLeft > 0) {
-                    Vec3d foot = footprint[i].add(radial[i].multiply((0.055 + strength * 0.018) * age));
-                    var water = waterAt(client.world, foot);
-                    wet[i] = water != null && Math.abs(water.position().y - origin.y) < 1.8;
-                    if (wet[i]) base[i] = water.position().add(water.normal().multiply(0.025));
+            if(++age>=life)return false;
+            boolean any=false;
+            for(int i=0;i<crest.length;i++) {
+                previous[i]=crest[i];previousBase[i]=base[i];
+                if(!alive[i])continue;
+                Vec3d target=crest[i].add(velocity[i]);
+                if(!clearPath(client,crest[i],target)){alive[i]=false;continue;}
+                crest[i]=target;velocity[i]=velocity[i].multiply(0.975).add(0,-0.042,0);
+                if(waterQueriesLeft>0) {
+                    var water=waterAt(client.world,footprint[i].add(radial[i].multiply(age*(0.06+strength*0.016))));
+                    wet[i]=water!=null&&Math.abs(water.position().y-origin.y)<1.8;
+                    if(wet[i])base[i]=water.position().add(water.normal().multiply(0.025));
                 }
-                if (crest[i].subtract(base[i]).dotProduct(normal) < 0.01) { alive[i] = false; continue; }
-                // The rim separates near its ballistic apex into coarse drops and finer spray.
-                // Staggered fingers avoid a synchronous particle ring or a central fog explosion.
-                if (!shed[i] && age >= 3 && (velocity[i].y < 0.09 || age > 9 + i % 3)) {
-                    shed[i] = true;
-                    int pieces = lobe[i] > 0.85 ? 3 : 1;
-                    for (int piece = 0; piece < pieces && crestParticlesLeft > 0
-                            && drops.size() < MAX_DROPS * quality(client) / 3; piece++) {
-                        Vec3d separation = radial[i].multiply(0.03 * piece).add(0, 0.025 * piece, 0);
-                        drops.add(new Fleck(crest[i].add(separation), velocity[i].add(separation),
-                                piece == 0 ? 0.045 : 0.020, false, appearance));
-                        crestParticlesLeft--;
+                if(crest[i].subtract(base[i]).dotProduct(normal)<0.01){alive[i]=false;continue;}
+                // Break up in staggered patches during ascent. The upper rim does not remain
+                // tethered to the water as long arms; droplets inherit its velocity and fall.
+                if(age==2+i%3 || age==5+i%2) {
+                    int pieces=2+(int)(noise[i]*3);
+                    for(int part=0;part<pieces && crestParticlesLeft>0 && drops.size()<MAX_DROPS*quality(client)/3;part++) {
+                        Vec3d side=normal.crossProduct(radial[i]).multiply((random.nextDouble()-0.5)*0.09);
+                        Vec3d spread=side.add(radial[i].multiply(random.nextDouble()*0.055));
+                        Fleck drop=new Fleck(crest[i].add(spread),velocity[i].add(spread),
+                                0.010+random.nextDouble()*0.012,false,appearance);
+                        drop.previous=previous[i].add(spread);drops.add(drop);crestParticlesLeft--;
                     }
-                    if (strength > 0.8 && i % 4 == 0 && crestParticlesLeft > 0
-                            && mist.size() < MAX_MIST * quality(client) / 3) {
-                        mist.add(new Fleck(crest[i], velocity[i].multiply(0.24), 0.07, true, appearance));
+                    if(i%3==0 && crestParticlesLeft>0 && mist.size()<MAX_MIST*quality(client)/3) {
+                        mist.add(new Fleck(crest[i],velocity[i].multiply(0.10),0.19+noise[i]*0.12,true,appearance));
                         crestParticlesLeft--;
                     }
                 }
-                any = true;
+                any=true;
             }
             return any;
         }
         void prepareFrame(float delta) {
-            for (int i = 0; i < crest.length; i++) {
-                frameBase[i] = previousBase[i].lerp(base[i], delta);
-                frameCrest[i] = previous[i].lerp(crest[i], delta)
-                        .add(0, 0.5 * (wake ? 0.018 : 0.028) * delta * (1 - delta), 0);
+            double time=Math.max(0,age-1+delta);
+            for(int i=0;i<crest.length;i++) {
+                frameBase[i]=previousBase[i].lerp(base[i],delta);
+                frameCrest[i]=previous[i].lerp(crest[i],delta).add(0,0.021*delta*(1-delta),0);
+                for(int h=0;h<HEIGHTS.length;h++)frameEdges[i][h]=edge(i,HEIGHTS[h],time);
             }
-        }
-        void render(float delta, MatrixStack.Entry entry, VertexConsumer vertices, boolean crestOnly, Vec3d camera) {
-            double t = Math.max(0, age - 1 + delta);
-            double fade = (1 - smooth((t - 3) / 14)) * smooth(t / 1.5);
-            if (wake) fade *= MathHelper.clamp(0.22 + strength * 0.65, 0.22, 1);
-            for (int i = 0; i < crest.length - (wake ? 1 : 0); i++) {
-                int next = (i + 1) % crest.length;
-                if (!alive[i] || !alive[next] || !wet[i] || !wet[next]) continue;
-                // A deterministic, progressively torn silhouette instead of a permanent smooth crown.
-                double tear = 1 - smooth((t - (4 + lobe[i] * 6)) / 6);
-                double landing = smooth(Math.min(frameCrest[i].subtract(frameBase[i]).dotProduct(normal),
-                        frameCrest[next].subtract(frameBase[next]).dotProduct(normal)) / 0.18);
-                double segmentFade = fade * tear * landing;
-                if (wake) segmentFade *= Math.pow(Math.sin(Math.PI * (i + 0.5) / (crest.length - 1)), 0.6);
-                Vec3d a = frameBase[i], b = frameBase[next];
-                Vec3d c = frameCrest[i], d = frameCrest[next];
-                int strips = wake ? 4 : 6;
-                for (int strip = 0; !crestOnly && strip < strips; strip++) {
-                    double low = strip / (double) strips, high = (strip + 1.0) / strips;
-                    Vec3d p0 = sheetPoint(a, c, radial[i], low, t, i), p1 = sheetPoint(b, d, radial[next], low, t, next);
-                    Vec3d p2 = sheetPoint(b, d, radial[next], high, t, next), p3 = sheetPoint(a, c, radial[i], high, t, i);
-                    quad(vertices, entry, camera, p0, p1, p2, p3, 0, (float) (1 - low), 1, (float) (1 - high),
-                            appearance, 0.38f, (int) (150 * segmentFade));
+            // Water and froth reuse the same cached folded surface. Every adjacent sector
+            // shares its boundary vertices, instead of recomputing the curves per quad/pass.
+            for(int i=0;i<crest.length;i++) {
+                int next=(i+1)%crest.length;
+                Vec3d out=radial[i].add(radial[next]).normalize();
+                for(int h=0;h<HEIGHTS.length;h++) {
+                    double fold=Math.sin(HEIGHTS[h]*Math.PI)*(0.055+0.11*noise[i]);
+                    frameMids[i][h]=curveMid(frameEdges[(i+crest.length-1)%crest.length][h],
+                            frameEdges[i][h],frameEdges[next][h],frameEdges[(next+1)%crest.length][h])
+                            .add(out.multiply(fold)).add(0,-fold*0.6,0);
                 }
-                // A thin frothy crest makes the transparent water sheet legible against bright water.
-                if (crestOnly) quad(vertices, entry, camera,
-                            sheetPoint(a, c, radial[i], 0.82, t, i), sheetPoint(b, d, radial[next], 0.82, t, next), d, c, 0, 1, 1, 0,
-                            appearance, 0.96f, (int) (220 * segmentFade));
             }
         }
-        Vec3d sheetPoint(Vec3d bottom, Vec3d top, Vec3d outward, double t, double time, int node) {
-            double phase = node * Math.PI * 2 / (wake ? crest.length - 1 : crest.length);
-            double billow = Math.sin(t * Math.PI) * (0.10 + strength * 0.18)
-                    * (1 + 0.20 * Math.sin(phase * 2 - time * 0.24 + seed));
-            // A bowed sheet with a rolling lip, rather than straight trapezoidal panels.
-            double curl = Math.sin(t * Math.PI * 0.5) * Math.sin(t * Math.PI) * smooth(time / 8);
-            return bottom.lerp(top, t).add(outward.multiply(billow - curl * strength * 0.12));
+        private Vec3d curveMid(Vec3d a,Vec3d b,Vec3d c,Vec3d d) {
+            // Catmull-Rom midpoint: a curved lip instead of straight chords between spikes.
+            return new Vec3d((-a.x+9*b.x+9*c.x-d.x)/16,(-a.y+9*b.y+9*c.y-d.y)/16,
+                    (-a.z+9*b.z+9*c.z-d.z)/16);
+        }
+        Vec3d edge(int node,double height,double time) {
+            // Irregular folds project into depth, with a falling lip. No cylinder cross-sections.
+            double bulge=Math.sin(height*Math.PI)*(0.06+strength*0.08)*(0.7+lobe[node]*0.3);
+            double curl=Math.sin(height*Math.PI)*smooth((time-1)/4)*0.10;
+            return frameBase[node].lerp(frameCrest[node],height).add(radial[node].multiply(bulge-curl*height));
+        }
+        Vec3d patch(int i,int next,int col,int height) {
+            return col==0?frameEdges[i][height]:col==1?frameMids[i][height]:frameEdges[next][height];
+        }
+        double opacity(int i,double height,double time) {
+            // Thin upper films dissolve first, lower scallops spread into surface foam.
+            double breakup=1-smooth((time-(2.0+noise[i]*2.5+(1-height)*2.2))/2.4);
+            return smooth(time/0.8)*(1-smooth((time-5)/5))*breakup;
+        }
+        void render(float delta,MatrixStack.Entry matrix,VertexConsumer vertices,boolean foam,Vec3d camera) {
+            double time=Math.max(0,age-1+delta);
+            for(int i=0;i<crest.length;i++) {
+                int next=(i+1)%crest.length;
+                if(!alive[i]||!alive[next]||!wet[i]||!wet[next])continue;
+                double landing=smooth(Math.min(frameCrest[i].subtract(frameBase[i]).dotProduct(normal),
+                        frameCrest[next].subtract(frameBase[next]).dotProduct(normal))/0.13);
+                // Tessellated, bowed fragments give a crown volume from every angle, then clear
+                // away in under half a second. The later silhouette consists of falling spray.
+                for(int row=0;row<5;row++) {
+                    double low=row/5.0,high=(row+1)/5.0;
+                    double fade=opacity(i,(low+high)*0.5,time)*landing;
+                    if(fade<0.008)continue;
+                    if(foam && row!=4 && row!=1)continue;
+                    if(foam)low=high-0.10;
+                    int lowIndex=foam?(row==1?2:6):ROWS[row],highIndex=ROWS[row+1];
+                    for(int col=0;col<2;col++) {
+                        double a=col/2.0,b=(col+1)/2.0;
+                        quad(vertices,matrix,camera,patch(i,next,col,lowIndex),patch(i,next,col+1,lowIndex),
+                                patch(i,next,col+1,highIndex),patch(i,next,col,highIndex),
+                                (float)(i*0.37+a),(float)(1-low),(float)(i*0.37+b),(float)(1-high),
+                                appearance,foam?0.97f:0.58f,(int)((foam?185:150)*fade));
+                    }
+                }
+            }
         }
     }
 
@@ -634,12 +687,16 @@ final class WaterSplashRenderer {
         final boolean fog;
         final Appearance appearance;
         final int life;
+        final int born=clock;
         int age;
         Fleck(Vec3d at, Vec3d velocity, double size, boolean fog, Appearance appearance) {
             previous = position = at; this.velocity = velocity; this.size = size; this.fog = fog;
-            this.appearance = appearance; life = fog ? 34 + random.nextInt(17) : 32 + random.nextInt(15);
+            this.appearance = appearance; life = fog ? 26 + random.nextInt(13) : 24 + random.nextInt(9);
         }
         boolean tick(MinecraftClient client) {
+            // Rim breakup happens before the particle update in this tick. Keep that birth
+            // frame on the interpolated crown instead of advancing new drops a second time.
+            if(clock==born)return true;
             if (++age >= life) return false;
             previous = position;
             Vec3d target = position.add(velocity);
@@ -659,16 +716,16 @@ final class WaterSplashRenderer {
                 }
             }
             position = target;
-            velocity = velocity.multiply(fog ? 0.955 : 0.985).add(0, fog ? -0.00065 : -0.035, 0);
+            velocity = velocity.multiply(fog ? 0.92 : 0.985).add(0, fog ? -MIST_SETTLING : -DROP_GRAVITY, 0);
             return true;
         }
         void render(float delta, MatrixStack matrices, VertexConsumer vertices, Vec3d camera,
                     org.joml.Quaternionf cameraRotation) {
             Vec3d at = previous.lerp(position, delta).subtract(camera);
             double fraction = Math.max(0, age - 1 + delta) / life;
-            float radius = (float) (size * (fog ? 1 + fraction * 2.0 : 1));
-            float height = fog ? radius : radius * (float) (1.3 + Math.min(2, velocity.length() * 2));
-            int alpha = (int) ((fog ? 84 : 210) * Math.pow(1 - fraction, fog ? 1.3 : 0.5));
+            float radius = (float) (size * (fog ? 1 + fraction * 2.3 : 1));
+            float height = fog ? radius*0.52f : radius * (float) (1.3 + Math.min(2, velocity.length() * 2));
+            int alpha = (int) ((fog ? 70 : 210) * Math.pow(1 - fraction, fog ? 1.1 : 0.5));
             if (fog) alpha = (int) (alpha * Math.min(1, (age + delta) / 4));
             matrices.push(); matrices.translate(at.x, at.y, at.z); matrices.multiply(cameraRotation);
             quad(vertices, matrices.peek(), Vec3d.ZERO, new Vec3d(-radius, -height, 0), new Vec3d(radius, -height, 0),
@@ -754,7 +811,7 @@ final class WaterSplashRenderer {
         for (Sheet sheet : sheets) sheet.prepareFrame(delta);
         var water = consumers.getBuffer(BoatEffectRenderPass.layer(SHEET, false));
         for (Sheet sheet : sheets) sheet.render(delta, matrices.peek(), water, false, camera);
-        var ribbon = consumers.getBuffer(BoatEffectRenderPass.layer(RIBBON, false));
+        var ribbon = consumers.getBuffer(BoatEffectRenderPass.softLayer(RIBBON));
         for (WakeStrip wake : wakes) wake.renderWave(delta, matrices.peek(), ribbon, camera, false);
         for (HullRibbon hull : hullRibbons.values()) for (WakeStrip strip : hull.strips)
             strip.renderWave(delta, matrices.peek(), ribbon, camera, false);
@@ -763,7 +820,7 @@ final class WaterSplashRenderer {
         for (Sheet sheet : sheets) sheet.render(delta, matrices.peek(), foam, true, camera);
 
         for (Ripple ripple : ripples) ripple.render(delta, matrices.peek(), foam, camera);
-        var froth = consumers.getBuffer(BoatEffectRenderPass.layer(FROTH, false));
+        var froth = consumers.getBuffer(BoatEffectRenderPass.softLayer(FROTH));
         for (HullRibbon hull : hullRibbons.values()) for (WakeStrip strip : hull.strips)
             strip.renderWave(delta, matrices.peek(), froth, camera, true);
         for (WakeStrip wake : wakes) wake.renderWave(delta, matrices.peek(), froth, camera, true);
@@ -771,7 +828,7 @@ final class WaterSplashRenderer {
         for(WakeStrip wake:wakes)wake.render(delta,matrices.peek(),lace,camera);
         var droplet = consumers.getBuffer(BoatEffectRenderPass.layer(DROP, false));
         for (Fleck drop : drops) drop.render(delta, matrices, droplet, camera, context.camera().getRotation());
-        var fog = consumers.getBuffer(BoatEffectRenderPass.layer(MIST, false));
+        var fog = consumers.getBuffer(BoatEffectRenderPass.softLayer(MIST));
         for (Fleck p : mist) p.render(delta, matrices, fog, camera, context.camera().getRotation());
     }
     private static void quad(VertexConsumer out, MatrixStack.Entry matrix, Vec3d camera,
@@ -795,7 +852,7 @@ final class WaterSplashRenderer {
     private static void vertex(VertexConsumer out, MatrixStack.Entry matrix, Vec3d p, float u, float v,
                                int r, int g, int b, int alpha, int light, Vec3d normal) {
         out.vertex(matrix.getPositionMatrix(), (float) p.x, (float) p.y, (float) p.z)
-                .color(r, g, b, alpha).texture(u, v).overlay(OverlayTexture.DEFAULT_UV).light(light)
+                .color(r, g, b, MathHelper.clamp(alpha,0,255)).texture(u, v).overlay(OverlayTexture.DEFAULT_UV).light(light)
                 .normal(matrix, (float) normal.x, (float) normal.y, (float) normal.z);
     }
 }

@@ -1,0 +1,32 @@
+{
+  "version": "0.10.18",
+  "jet_pose_mass_cases": 2500,
+  "horizontal_thrust_unchanged": true,
+  "single_face_thrust_unchanged": true,
+  "combined_small_jet_lift_regression_reproduced": true,
+  "more_mass_reduces_lift": true,
+  "maximum_crest_drop_landing_ticks": 16,
+  "maximum_mist_rise": 0.1469,
+  "crown_rim_breaks_before_foot": true,
+  "crown_film_gone_by_tick": 10,
+  "camera_lifecycle_and_mixin_source_guards": true,
+  "graph_links_checked": 17,
+  "soft_texture_alpha": {
+    "particle/jet": {
+      "max_alpha": 167,
+      "mean_alpha": 23.17,
+      "transparent_edges": true
+    },
+    "water/vapor": {
+      "max_alpha": 148,
+      "mean_alpha": 23.86,
+      "transparent_edges": true
+    }
+  },
+  "soft_shader_resource_contract_checked": true,
+  "java_compiled": false,
+  "minecraft_launched": false,
+  "live_camera_tested": false,
+  "in_game_visuals_verified": false,
+  "fps_measured": false
+}

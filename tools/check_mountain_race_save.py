@@ -145,7 +145,8 @@ for index,station in enumerate(manifest['supply_stations']):
                 for y in (63,64,65):hull_approach.add((x,y,z,'passable','berthing hull clearance'))
     for x,y,z in station['water']:
         checks.append((x,y,z,'water','supply basin'))
-        checks.append((x,60,z,'water','supply basin depth'))
+        checks.append((x,62,z,'solid','one-block supply basin floor'))
+        checks.append((x,61,z,'solid','sealed supply basin foundation'))
     for x,y,z in station['clearance']:
         for dy in (0,2,5):checks.append((x,y+dy,z,'air','drive-through clearance'))
     edge=int(np.ceil(mountain.half_width(station['s'])))

@@ -1,0 +1,20 @@
+{
+  "version": "0.10.19",
+  "java_files_parsed": 74,
+  "adjacent_row_cases": 160,
+  "legacy_mount_positions_preserved": true,
+  "shared_crown_vertices_source_checked": true,
+  "operator_only_world_settings_source_checks": true,
+  "jet_default_density_unchanged": true,
+  "graph_nodes": 12,
+  "locales": [
+    "zh_cn",
+    "en_us"
+  ],
+  "particle_pool_limits_unchanged": true,
+  "java_compiled": false,
+  "minecraft_launched": false,
+  "live_network_tested": false,
+  "in_game_visuals_verified": false,
+  "fps_measured": false
+}

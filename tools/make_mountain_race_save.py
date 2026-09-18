@@ -1,4 +1,4 @@
-"""V11 course: single-resource waterfront stations with reachable boat crafting.
+"""V12 course: one-block-deep waterfront stations with reachable boat crafting.
 
 Reuses V2's race rules and Anvil writer. Only new/pristine output worlds may be generated.
 """
@@ -18,7 +18,7 @@ import make_shared_race_save as course
 from race_nbt import *
 
 ROOT=Path(__file__).resolve().parents[1]
-OUT=ROOT/'maps/Puffer_Rally_Mountain_V11'
+OUT=ROOT/'maps/Puffer_Rally_Mountain_V12'
 FLAT_SCALE=.52
 MOUNTAIN_RADIUS=150
 ELEVATION_STEP=30
@@ -512,7 +512,7 @@ def geometry():
     railing_lights()
     entities=course.base.BLOCK_ENTITIES[0,-2]
     entities[:]=[be for be in entities if (be['x'][1],be['y'][1],be['z'][1])!=(0,65,-32)]
-    course.base.sign(0,65,-32,['河豚盘山拉力赛 V11',f'{LENGTH/1000:.1f} 公里','黄色主线 / 绿色近道','岸上起航'])
+    course.base.sign(0,65,-32,['河豚盘山拉力赛 V12',f'{LENGTH/1000:.1f} 公里','黄色主线 / 绿色近道','岸上起航'])
     DECOR=sculpted_wonders.build(sys.modules[__name__])
     DECOR.update(rally_ground_details.build(sys.modules[__name__]))
 
@@ -520,7 +520,7 @@ def geometry():
 def navigation():
     fn=course.fn;p=OUT/'datapacks/puffer_rally/data/puffer_rally/function'
     (OUT/'datapacks/puffer_rally/pack.mcmeta').write_text(json.dumps({'pack':{'pack_format':48,
-        'description':'Puffer Mountain Rally V11 / single-resource waterfront stations'}}),encoding='utf-8')
+        'description':'Puffer Mountain Rally V12 / one-block-deep waterfront stations'}}),encoding='utf-8')
     load=(p/'load.mcfunction').read_text(encoding='utf-8').splitlines()
     load += [f'scoreboard objectives add {name} dummy' for name in ('lr_navclock','lr_off','lr_warn')]
     fn('load',load)
@@ -573,7 +573,7 @@ def configure():
 
 def artifacts(chunks):
     gates=course.GATES
-    manifest={'minecraft':'1.21.1','required_mod':'longboatlab >=0.10.13','length_blocks':round(LENGTH,2),
+    manifest={'minecraft':'1.21.1','required_mod':'longboatlab >=0.10.17','length_blocks':round(LENGTH,2),
         'chunks':chunks,'gates':gates,'mountain_start':MOUNTAIN_START,'mountain_end_y':int(water_y(LENGTH)),
         'spiral_turns':SPIRAL_TURNS,'main_corner_count':len(FLAT_WAYPOINTS)-2,'arrows':ARROWS,'structures':STRUCTURES,
         'supports':SUPPORTS,
@@ -585,9 +585,9 @@ def artifacts(chunks):
         'runtime_tested':False,'navigation_interval_ticks':10,'navigation_warning_cooldown_ticks':60,
         'start_surface':'harbor_deck','start_y':65,'start_z':-17,'decor':DECOR}
     (OUT.parent/(OUT.name+'_manifest.json')).write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
-    guide=f'''# 河豚盘山拉力赛 V11
+    guide=f'''# 河豚盘山拉力赛 V12
 
-Minecraft Java 1.21.1 / Fabric / Longboat Lab 0.10.13 及以上。
+Minecraft Java 1.21.1 / Fabric / Longboat Lab 0.10.17 及以上。
 地图目录：{OUT.name}。这是独立新存档，旧版已游玩进度保留。
 
 ## 路线
@@ -603,7 +603,7 @@ Minecraft Java 1.21.1 / Fabric / Longboat Lab 0.10.13 及以上。
 
 ## 比赛与操作
 
-开局一格船、2 个河豚桶、4 把木铲、1 把重锤；首格留空并选中。彩色灯标指向可直接驶入的补给水港，乘船靠近水边服务台，空手对准箱子右键领取。
+开局一格船、2 个河豚桶、4 把木铲、1 把重锤；首格留空并选中。补给港水面保持 Y=63，底部抬到 Y=62，只有一格水深；彩色灯标指向可直接驶入的补给水港，乘船靠近水边服务台，空手对准箱子右键领取。
 每处补给点仅有一种资源，沿途依次为：①绿色木铲港 6 把；②蓝色木船港 2 艘；③黄色河豚港 4 桶；④黄色河豚港 4 桶。每人每局每站各领一次，不抢占其他选手补给；检查背包和可合并的副手堆叠容量，装不下则不扣领取资格。
 木船港的工作台紧邻船箱，两者都放在水边第一排，靠泊后可在船内直接使用。使用原版方块交互距离，当前乘坐的船不会拦截箱子或工作台的右键。
 R 切换形态，空格跳跃/松钩，G 发射钩爪，W/S 收放，方向键球面摆动；Alt 全喷，数字小键盘控制单面；H 隐藏 HUD、J 缩放。按键可自定义。
@@ -636,7 +636,7 @@ def main():
     configure();shortcuts();OUT.mkdir(parents=True,exist_ok=True)
     geometry();course.pack();navigation();rally_pit_stops.pack(sys.modules[__name__]);course.level()
     root=decode(gzip.decompress((OUT/'level.dat').read_bytes()))
-    root['Data'][1]['LevelName']=string('河豚盘山拉力赛 V11')
+    root['Data'][1]['LevelName']=string('河豚盘山拉力赛 V12')
     root['Data'][1]['BorderCenterX']=double(1400)
     # WorldSaveProperties expects this compound even for an overworld-only adventure map.
     root['Data'][1]['DragonFight']=compound({'NeedsStateScanning':byte(1),
@@ -652,7 +652,7 @@ def overview():
     image=Image.new('RGB',(1400,1150),'#17333c');draw=ImageDraw.Draw(image)
     font=lambda n:ImageFont.truetype('C:/Windows/Fonts/msyh.ttc',n)
     xy=lambda p:tuple(np.asarray(p)*scale+offset)
-    draw.text((35,18),'河豚盘山拉力赛 V11',font=font(30),fill='#f3eac4')
+    draw.text((35,18),'河豚盘山拉力赛 V12',font=font(30),fill='#f3eac4')
     draw.text((35,60),f'{LENGTH/1000:.1f} km  /  {len(FLAT_WAYPOINTS)-2} 个主线转弯 + {SPIRAL_TURNS} 圈盘山水路  /  {len(ARROWS)} 组箭头',font=font(18),fill='#a8d9d9')
     for i in range(0,len(POINTS)-4,4):
         y=int(water_y(DISTANCES[i]));color=(65+int((y-63)*1.4),165,191) if y>63 else (62,145,171)

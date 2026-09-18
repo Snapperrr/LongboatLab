@@ -118,7 +118,9 @@ public final class PufferGrid {
         Vec3d hit=target.localHit().subtract(PufferAttachments.position(boat,mount,BoatGeometry.extension(boat)));
         if(c.face!=BOTTOM && hit.y>=0.159) {
             // Aim at the top to grow upwards; aiming at the face extends the horizontal branch.
-            long v=(long)c.v+2+(c.outward || c.face>=LEFT ? 0 : mount.index()*2L);
+            // V is a single 0.23-block row. Legacy vertical columns still have 0.46 spacing;
+            // preserve their occupied row, but place the new fish immediately above it.
+            long v=(long)c.v+1+(c.outward || c.face>=LEFT ? 0 : mount.index()*2L);
             long depth=(long)c.depth+(c.outward?mount.index():c.face>=LEFT?Math.round(mount.index()*0.75):0);
             if(v>Integer.MAX_VALUE||depth>Integer.MAX_VALUE)return null;
             return new Cell(c.face,c.slot,c.u,(int)v,c.lane,(int)depth,true);

@@ -21,6 +21,7 @@
     "client.BoostFovMixin",
     "client.BoatItemRendererMixin",
     "client.RiderCameraMixin",
+    "client.MouseMixin",
     "client.RiderRendererMixin",
     "client.WaterTerrainShaderMixin"
   ],

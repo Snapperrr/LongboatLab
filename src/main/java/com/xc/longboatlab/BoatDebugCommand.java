@@ -19,7 +19,7 @@ public final class BoatDebugCommand {
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registries, environment) -> dispatcher.register(
                 CommandManager.literal("longboatlab").requires(source -> source.hasPermissionLevel(2))
-                        .then(branch("spawn")).then(branch("give")).then(oarBranch()).then(RigBoatCommand.branch())
+                        .then(branch("spawn")).then(branch("give")).then(oarBranch()).then(RigBoatCommand.branch()).then(JetSettings.branch())
                         .then(RaceRescue.prepareCommand()).then(RaceRescue.moveCommand())
                         .then(CommandManager.literal("physics").executes(context -> {
                             var player = context.getSource().getPlayerOrThrow();

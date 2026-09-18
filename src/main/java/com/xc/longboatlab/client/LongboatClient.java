@@ -21,6 +21,7 @@ public final class LongboatClient implements ClientModInitializer {
         ClientEntityEvents.ENTITY_UNLOAD.register((entity, world) -> LoadedBoats.remove(entity));
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(LongboatModels.INSTANCE);
         BoatKeys.register();
+        ClientJetSettings.register();
         BoatHud.register();
         PufferPlacementPreview.register();
         com.xc.longboatlab.client.water.WaterSurfaceShaders.register();

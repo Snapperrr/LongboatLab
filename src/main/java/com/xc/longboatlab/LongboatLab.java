@@ -35,6 +35,7 @@ public final class LongboatLab implements ModInitializer {
     @Override
     public void onInitialize() {
         StackableSupplies.register();
+        JetSettings.register();
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> LoadedBoats.add(entity));
         ServerEntityEvents.ENTITY_UNLOAD.register((entity, world) -> LoadedBoats.remove(entity));
         BoatDebugCommand.register();

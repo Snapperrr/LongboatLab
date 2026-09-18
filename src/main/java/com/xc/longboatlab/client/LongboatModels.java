@@ -21,11 +21,12 @@ import net.minecraft.util.Identifier;
 /** The packaged Blockbench projects are the actual source of the entity mesh. */
 public final class LongboatModels implements SimpleSynchronousResourceReloadListener {
     public static final LongboatModels INSTANCE = new LongboatModels();
-    private final Map<Integer, ModelPart> hulls = boundedCache();
+    private record HullSize(int segments, int width) {}
+    private final Map<HullSize, ModelPart> hulls = boundedCache();
     private final Map<Integer, ModelPart> waterMasks = boundedCache();
-    private static Map<Integer, ModelPart> boundedCache() {
-        return new java.util.LinkedHashMap<>(32, 0.75f, true) {
-            @Override protected boolean removeEldestEntry(Map.Entry<Integer, ModelPart> entry) { return size() > 32; }
+    private static <K> Map<K, ModelPart> boundedCache() {
+        return new java.util.LinkedHashMap<K, ModelPart>(32, 0.75f, true) {
+            @Override protected boolean removeEldestEntry(Map.Entry<K, ModelPart> entry) { return size() > 32; }
         };
     }
     private List<Cube> hullTemplate = List.of();
@@ -36,25 +37,24 @@ public final class LongboatModels implements SimpleSynchronousResourceReloadList
 
     @Override public void reload(ResourceManager manager) {
         hullTemplate = read(manager, "continuous_hull");
-        oar = bake(read(manager, "oar"), 2, false);
+        oar = bake(read(manager, "oar"), 2, 1, false);
         hulls.clear();
         waterMasks.clear();
     }
 
     public ModelPart hull(int segments) {
-        return hulls.computeIfAbsent(segments, length -> bake(hullTemplate, length, true));
+        return hull(segments, 1);
     }
-    /** Stretch the continuous boards while translating the end caps at their original thickness. */
+    private ModelPart hull(int segments, int width) {
+        return hulls.computeIfAbsent(new HullSize(segments, width), size -> bake(hullTemplate, size.segments, size.width, true));
+    }
+    /** Animate length; the width and its box UVs are baked together at native texel density. */
     public ModelPart prepareHull(int segments, double half, float extension, int width) {
-        ModelPart hull = hull(segments);
+        ModelPart hull = hull(segments, width);
         for (Cube cube : hullTemplate) {
             if (cube.name.startsWith("seat_")) continue;
             ModelPart part = hull.getChild(cube.name);
             part.zScale = 1; part.pivotZ = 0;
-            part.xScale=1; part.pivotX=0;
-            if(cube.name.startsWith("stretch_left_")) part.pivotX=(width-1)*11f;
-            else if(cube.name.startsWith("stretch_right_")) part.pivotX=-(width-1)*11f;
-            else part.xScale=width;
             if (cube.name.startsWith("stretch_")) {
                 double originalStart = cube.z - (segments - 2) * 16.0;
                 double desiredStart = cube.z - (half - 2) * 16;
@@ -65,7 +65,6 @@ public final class LongboatModels implements SimpleSynchronousResourceReloadList
         }
         for (int i = 1; i <= Math.min(512, segments - 1); i++) {
             ModelPart divider = hull.getChild("divider_" + i);
-            divider.xScale=(22f*width-4)/18;
             divider.zScale = extension;
             divider.yScale = extension;
             divider.visible = extension > 0.001f;
@@ -104,28 +103,37 @@ public final class LongboatModels implements SimpleSynchronousResourceReloadList
 
     private static float value(JsonArray array, int index) { return array.get(index).getAsFloat(); }
 
-    private static ModelPart bake(List<Cube> cubes, int segments, boolean extend) {
+    private static ModelPart bake(List<Cube> cubes, int segments, int width, boolean extend) {
         ModelData model = new ModelData();
         float extension = (segments - 2) * 16f;
         for (Cube cube : cubes) {
             if (extend && cube.name().startsWith("seat_")) continue;
-            float z = cube.z(), depth = cube.depth();
+            float x = cube.x(), cubeWidth = cube.width(), z = cube.z(), depth = cube.depth();
+            if (extend) {
+                if (cube.name().startsWith("stretch_left_")) x += (width - 1) * 11f;
+                else if (cube.name().startsWith("stretch_right_")) x -= (width - 1) * 11f;
+                else { x *= width; cubeWidth *= width; }
+            }
             if (extend && cube.name().startsWith("stretch_")) {
                 z -= extension;
                 depth += extension * 2;
             } else if (extend && cube.name().startsWith("bow_")) z += extension;
             else if (extend && cube.name().startsWith("stern_")) z -= extension;
             model.getRoot().addChild(cube.name(), ModelPartBuilder.create().uv(cube.u(), cube.v())
-                    .cuboid(cube.x(), cube.y(), z, cube.width(), cube.height(), depth), ModelTransform.NONE);
+                    // Box UV extents grow with the geometry, sampling more of the tiled
+                    // wood atlas instead of scaling its pixels. Sidewall thickness stays fixed.
+                    .cuboid(x, cube.y(), z, cubeWidth, cube.height(), depth), ModelTransform.NONE);
         }
         if (extend) {
             Cube crossbar = cubes.stream().filter(c -> c.name().equals("seat_center")).findFirst().orElseThrow();
+            float crossbarScale = (22f * width - 4) / 18;
             int dividers = Math.min(512, segments - 1);
             for (int i = 1; i <= dividers; i++) {
                 long boundary = (long) i * segments / (dividers + 1);
                 float z = -segments * 16f + boundary * 32f - crossbar.depth() / 2;
                 model.getRoot().addChild("divider_" + i, ModelPartBuilder.create().uv(crossbar.u(), crossbar.v())
-                        .cuboid(crossbar.x(), crossbar.y(), z, crossbar.width(), crossbar.height(), crossbar.depth()),
+                        .cuboid(crossbar.x() * crossbarScale, crossbar.y(), z, crossbar.width() * crossbarScale,
+                                crossbar.height(), crossbar.depth()),
                         ModelTransform.NONE);
             }
         }

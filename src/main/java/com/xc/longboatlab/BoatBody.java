@@ -187,22 +187,22 @@ public final class BoatBody {
             center=center.add(BoatSeats.localFeet(boat,rider).add(0,rider.getHeight()*0.45,0).multiply(0.45));mass+=0.45;
         }
         center=center.multiply(1/mass);
-        int[] counts=PufferGrid.counts(boat); Vec3d[] centers=PufferGrid.centers(boat);
-        for(int face=0;face<5;face++)if((jets&(1<<face))!=0 && counts[face]>0) {
-            // Preserve the established horizontal boost on every face. Its arcade speed bonus
-            // must not become a gravity-defeating upward acceleration when the hull pitches/rolls.
-            double horizontalAcceleration=face==PufferGrid.BOTTOM ? Math.min(0.075,0.018*Math.sqrt(counts[face])/Math.sqrt(mass))
-                    : Math.min(0.45,(0.075+0.035*Math.sqrt(counts[face]))/Math.sqrt(mass));
-            // All faces share the same vertical force budget, divided by the entire loaded mass.
-            // Gravity remains a separate world-down acceleration in environment()/vanilla physics.
-            double verticalAcceleration=Math.min(0.075,0.018*Math.sqrt(counts[face])/mass);
-            Vec3d axis=direction(boat,PufferGrid.normal(face).negate());
-            Vec3d acceleration=new Vec3d(axis.x*horizontalAcceleration,axis.y*verticalAcceleration,
-                    axis.z*horizontalAcceleration);
-            boat.setVelocity(boat.getVelocity().add(acceleration));
-            // Rotation must use the actual applied force, including the reduced vertical component.
-            Vec3d force=unrotate(boat,acceleration.multiply(mass));
-            torque(centers[face].subtract(center).crossProduct(force),mass,half,BoatGeometry.halfWidth(boat));
+        if(jets!=0) {
+            int[] counts=PufferGrid.counts(boat); Vec3d[] centers=PufferGrid.centers(boat);
+            double jetMultiplier=boat.getServer()==null?1:JetSettings.get(boat.getServer()).force();
+            Vec3d[] jetAxes=new Vec3d[PufferGrid.FACES];
+            for(int face=0;face<PufferGrid.FACES;face++)if((jets&(1<<face))!=0 && counts[face]>0)
+                jetAxes[face]=direction(boat,PufferGrid.normal(face).negate());
+            Vec3d[] accelerations=JetPhysics.accelerations(counts,jetAxes,mass,jetMultiplier);
+            for(int face=0;face<PufferGrid.FACES;face++)if((jets&(1<<face))!=0 && counts[face]>0) {
+                // Apply the final shared lift allocation to translation AND torque; gravity remains
+                // world-down in environment()/vanilla physics, independent of hull orientation.
+                Vec3d acceleration=accelerations[face];
+                boat.setVelocity(boat.getVelocity().add(acceleration));
+                // Rotation must use the actual applied force, including the reduced vertical component.
+                Vec3d force=unrotate(boat,acceleration.multiply(mass));
+                torque(centers[face].subtract(center).crossProduct(force),mass,half,BoatGeometry.halfWidth(boat));
+            }
         }
         double drivenPitchSpeed=pitchSpeed, drivenRollSpeed=rollSpeed;
         // Uniform gravity has no torque in free fall. Ground support and buoyancy act away from the mass center.

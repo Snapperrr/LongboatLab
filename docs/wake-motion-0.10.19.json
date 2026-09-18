@@ -1,0 +1,17 @@
+{
+  "version": "0.10.19",
+  "java_files_parsed": 5,
+  "yaw_interpolation_cases": 29700,
+  "old_wrap_jump_cases_reproduced": 162,
+  "largest_old_seat_position_error_blocks": 64.938432,
+  "largest_new_seat_position_error_blocks": 0.0,
+  "spray_direction_and_budget_cases": 7200,
+  "old_reverse_spray_reproduced": true,
+  "rotating_texture_station_cases": 9000,
+  "two_side_allocation_cases": 1200,
+  "particle_pool_limits_unchanged": true,
+  "java_compiled": false,
+  "minecraft_launched": false,
+  "in_game_visuals_verified": false,
+  "fps_measured": false
+}

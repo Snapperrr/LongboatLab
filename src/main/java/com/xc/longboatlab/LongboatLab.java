@@ -90,6 +90,14 @@ public final class LongboatLab implements ModInitializer {
                 access.longboat$setRig(rig.changeGrid(cell, 1));
                 held.decrementUnlessCreative(1, player);
                 player.getItemCooldownManager().set(Items.PUFFERFISH_BUCKET, 5);
+                var local = PufferGrid.position(target.boat(), cell, rig.gridPuffers().getOrDefault(cell, 0),
+                        BoatGeometry.extension(target.boat()));
+                var soundPosition = BoatBody.world(target.boat(), local);
+                player.getWorld().playSound(null, soundPosition.x, soundPosition.y, soundPosition.z,
+                        SoundEvents.ITEM_BUCKET_EMPTY_FISH, SoundCategory.PLAYERS, 0.9f, 1.05f);
+                player.getWorld().playSound(null, soundPosition.x, soundPosition.y, soundPosition.z,
+                        SoundEvents.BLOCK_WOOD_PLACE, SoundCategory.PLAYERS, 0.55f, 1.25f);
+                target.boat().emitGameEvent(GameEvent.ENTITY_INTERACT, player);
                 BoatNoticePayload.send(player, Text.translatable("message.longboatlab.puffers", access.longboat$puffers()));
                 return;
             } else if (held.isOf(Items.WOODEN_SHOVEL)) {

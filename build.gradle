@@ -6,6 +6,15 @@ version = project.mod_version
 group = project.maven_group
 base { archivesName = project.archives_base_name }
 
+loom {
+    runs {
+        client {
+            // Fixed local profile: this UUID selects the slim Alex skin overridden in run/resourcepacks.
+            programArgs '--username', 'Momore', '--uuid', '00000000-0000-0000-0000-000000000012'
+        }
+    }
+}
+
 repositories { mavenCentral() }
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"

@@ -1,0 +1,24 @@
+{
+  "functions": 209,
+  "command_lines": 2328,
+  "guard_scenarios": 19,
+  "java_compiled": false,
+  "minecraft_started": false,
+  "commands_parsed_by_minecraft": false,
+  "unchanged_region_hashes": {
+    "r.-1.-1.mca": "02c288f95b3ac2e2f876cb36b088417be0866382166af4c71a97a73afc74a131",
+    "r.-1.0.mca": "73d222f7efe8fa96180c95da3a17b2b49ba086704c09b42128b57a4557cfd012",
+    "r.0.-1.mca": "6d5488c5e0853fcb4dd8e499b4681d01b1883f9b9f806f0b6ba76c97aa45a0cd",
+    "r.0.0.mca": "fda789a43002734cc91a906cef91d2bd8731e3e34b13ccc634e6196e80668062",
+    "r.0.1.mca": "da62640466dd58977e9d1b8921b095f6dca43482197da4d8bc71071ae702f2cc",
+    "r.0.2.mca": "4f80c929ebc834fdddd82dc7fb7c1fc6922333b43d310126e065ad9b99617b92",
+    "r.1.-1.mca": "c896293e2c1c87c4c988a2e712530cc04f0eb7ef2d97c27c82f2d7d9afeca026",
+    "r.1.0.mca": "ea097d8e91c7d83a2e6a2f39d083038c0c5b477f6ed4d9a25744a5ea1deb3e4b",
+    "r.1.1.mca": "ba5ebc3fbdf1f21853f683ad6332b6b060a7291a7b410bbd00923c0b5d2b4b65",
+    "r.1.2.mca": "79910bb001f1642057233e3563e519d93dbfe8c96e97e81d87e43d62f2d115f0",
+    "r.2.1.mca": "f8a3c054dcf6c521ba5853cd0c5d6cf32ac3875045fcca5cf6b9c5e6b8b4248b",
+    "r.2.2.mca": "5919d7c80e370624bbd710860001c7206b4a0e3120653d6704023427da7183f3"
+  },
+  "map_source_matches_final": true,
+  "mod_version": "0.10.20"
+}

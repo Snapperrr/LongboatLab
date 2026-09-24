@@ -101,6 +101,34 @@ public final class BoatGeometry {
         if (movement.lengthSquared() < 1e-18) return Vec3d.ZERO;
         List<Box> parts = collisionParts(boat, boat.getYaw());
         var scene = BoatCollisionScene.of(boat);
+        Vec3d normal = clipParts(scene, parts, Vec3d.ZERO, movement);
+        Vec3d horizontal = new Vec3d(movement.x, 0, movement.z);
+        if (horizontal.lengthSquared() < 1e-10 || boat.getWorld().isClient) return normal;
+        double height = ((BoatAccess) boat).longboat$abilities().giantStepHeight(boat);
+        if (height <= 0 || new Vec3d(normal.x, 0, normal.z).squaredDistanceTo(horizontal) < 1e-10) return normal;
+
+        // A planted giant blade can support a step, like a walking leg. Determine
+        // the actual ledge height instead of repeatedly adding an upward impulse.
+        double rise = 0;
+        for (Box part : parts) {
+            double required = scene.riseToClear(part.stretch(horizontal), height);
+            if (!Double.isFinite(required)) return normal;
+            rise = Math.max(rise, required);
+        }
+        if (rise <= 1e-6 || rise > height) return normal;
+        Vec3d up = clipParts(scene, parts, Vec3d.ZERO, new Vec3d(0, rise, 0));
+        if (up.y < rise - 1e-6) return normal; // Rider/head/other oars also need clearance.
+        Vec3d across = clipParts(scene, parts, up, horizontal);
+        if (across.lengthSquared() <= normal.x * normal.x + normal.z * normal.z + 1e-8) return normal;
+        Vec3d raised = up.add(across);
+        double descend = Math.min(0, movement.y) - rise;
+        Vec3d down = clipParts(scene, parts, raised, new Vec3d(0, descend, 0));
+        if (scene.unknown()) return normal;
+        if (down.y <= descend + 1e-6) return normal; // No landing: never step across an unsupported gap.
+        return raised.add(down);
+    }
+
+    private static Vec3d clipParts(BoatCollisionScene scene, List<Box> parts, Vec3d start, Vec3d movement) {
         Vec3d completed = Vec3d.ZERO;
         // Use the vanilla Y-first axis order, carrying the accepted offset into the following axes.
         int[] axes = Math.abs(movement.x) < Math.abs(movement.z) ? new int[] {1, 2, 0} : new int[] {1, 0, 2};
@@ -111,7 +139,8 @@ public final class BoatGeometry {
             for (Box part : parts) {
                 Vec3d request = axis == 0 ? new Vec3d(allowed, 0, 0)
                         : axis == 1 ? new Vec3d(0, allowed, 0) : new Vec3d(0, 0, allowed);
-                Vec3d clipped = scene.clip(part.offset(completed), request);
+                Vec3d clipped = scene.clip(part.offset(start).offset(completed), request);
+                if (scene.unknown()) return Vec3d.ZERO;
                 allowed = axis == 0 ? clipped.x : axis == 1 ? clipped.y : clipped.z;
                 if (Math.abs(allowed) < 1e-9) break;
             }

@@ -85,4 +85,21 @@ public final class BoatCollisionScene {
         }
         return new Vec3d(x, y, z);
     }
+
+    /** Minimum upward clearance for a foot/swept hull, using actual voxel pieces.
+     * Unknown terrain or an obstacle beyond the leg's reach rejects the step.
+     * The caller must still sweep the complete boat up/across/down before moving.
+     */
+    public double riseToClear(Box box, double limit) {
+        Box interior = box.contract(1e-6);
+        List<VoxelShape> shapes = shapes(interior);
+        if (shapes == null) return Double.NaN;
+        double rise = 0;
+        for (var shape : shapes) for (Box obstacle : shape.getBoundingBoxes()) {
+            if (!obstacle.intersects(interior)) continue;
+            rise = Math.max(rise, obstacle.maxY - interior.minY + 2e-5);
+            if (rise > limit) return Double.NaN;
+        }
+        return rise;
+    }
 }

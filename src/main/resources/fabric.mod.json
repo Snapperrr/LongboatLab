@@ -4,6 +4,7 @@
   "version": "${version}",
   "name": "Longboat Lab",
   "description": "Continuous extensible vanilla boats, detachable oars and differential rowing.",
+  "icon": "assets/longboatlab/icon.png",
   "authors": ["xc"],
   "license": "MIT",
   "environment": "*",

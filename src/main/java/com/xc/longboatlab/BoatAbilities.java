@@ -40,6 +40,8 @@ public final class BoatAbilities {
     public boolean transforming() { return morphTicks > 0; }
     public NbtCompound saveJoints() { return giantMotor.save(); }
     public void loadJoints(NbtCompound tag) { giantMotor.load(tag); }
+    public double giantPhase(boolean left) { return giantMotor.phase(left); }
+    public double giantStepHeight(BoatEntity boat) { return giantMotor.stepHeight(boat); }
     public void giantInstalled(BoatEntity boat, boolean wasCompressed) {
         stopSpring();
         retract(); morphTicks = wasCompressed ? MORPH_DURATION : 0;

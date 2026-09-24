@@ -1,3 +1,4 @@
+execute if score #phase lr_state matches 4 run return 0
 scoreboard players add @a[tag=lr_racer,scores={lr_place=0}] lr_time 1
 execute as @a[tag=lr_racer,tag=!lr_rescue_pending,scores={lr_cp=0,lr_place=0},x=-34,y=60,z=55,dx=68,dy=14,dz=15] at @s run function puffer_rally:cp_1
 execute as @a[tag=lr_racer,tag=!lr_rescue_pending,scores={lr_cp=1,lr_place=0},x=-14,y=60,z=159,dx=28,dy=14,dz=15] at @s run function puffer_rally:cp_2

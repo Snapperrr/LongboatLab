@@ -1,3 +1,6 @@
+tag @s remove lr_free
+tag @s remove lr_free_joining
+scoreboard players set @s lr_fstock 0
 tag @s remove lr_rescue_pending
 tag @s remove lr_replace_pending
 scoreboard players reset @s lr_sec
@@ -12,3 +15,4 @@ tag @s remove lr_b
 tag @s remove lr_racer
 execute unless entity @a[tag=lr_racer] unless score #phase lr_state matches 0 run scoreboard players add #round lr_epoch 1
 execute unless entity @a[tag=lr_racer] run scoreboard players set #phase lr_state 0
+execute unless score #phase lr_state matches 4 run function puffer_rally:display_setup

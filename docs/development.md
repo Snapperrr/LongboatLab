@@ -53,6 +53,7 @@
 | 角度插值、喷雾方向与连续浪迹检查 | `tools/check_wake_motion.py` |
 | 船侧压力波、破碎泡沫与纹理检查 | `tools/check_spilling_wake.py`；`tools/preview_spilling_wake.py` 输出离线几何／材质预览到 `build/visual-review-0.10.19` |
 | 宽船材质与几何检查 | `tools/check_hull_material.py`，校验侧壁厚度、横梁衔接、UV 密度与九种图集平铺 |
+| 自由练习数据包 | `tools/rally_free_practice.py`，地图生成器会在竞赛函数之后应用；`tools/check_free_practice.py <存档目录>` 检查入口、补给与退出分支 |
 | 资源批处理辅助脚本 | `tools/update_ability_assets.mjs`；仅此类工具需要 Node.js |
 
 模型、声音、贴图、水面 shader 与地图均已保存。不要为了安装模组重新运行地图生成器；需要导入地图时使用根目录的 `Puffer_Rally_Final` 或 ZIP。
@@ -76,3 +77,7 @@
 侧浪检查见 [spilling-wake-0.10.19.json](spilling-wake-0.10.19.json)，方向与角度回归见 [wake-motion-0.10.19.json](wake-motion-0.10.19.json)。离线 CPU 预览只比较纹理透明度和几何形态，不包含实际游戏的动态水面、光照与粒子，不能当作实机截图。未编译或启动游戏，本轮没有改动地图。
 
 宽船材质检查见 [hull-material-0.10.19.json](hull-material-0.10.19.json)，包含 96 组宽度／部件检查，确认原宽形状、加宽后的侧壁厚度与横梁接触不变；九种图集均可继续平铺。通过本地 1.21.1 字节码确认盒式 UV 的跨度按传入 cuboid 尺寸计算，不依赖编译或游戏启动。
+
+0.10.20 的巨大桨地面驱动在 `GiantOarMotor`，数值参数在 `GiantOarPhysics`。固定 4 子步、失败后 3 次二分、每桨 3 个接地探针；桨的碰撞切片数与 `BoatCollisionScene` 的块查询预算保持不变。`BoatGeometry` 在有撑地桨和行驶输入时尝试上抬／前移／下落路径，上抬只纠正位置，不向速度叠加升力；未知区域、头顶阻挡、无落脚点都拒绝越障。每步最大跨越高度 8 格，关节每 tick 共用最高 0.4 格的撑起预算。指令生成的极端桨尺寸仍受这些空间／工作量边界约束。
+
+本轮解析全部 75 个 Java 源文件，核对本地 1.21.1 的碰撞、声音 API，以及直接从数值源码读取的尺寸单调性与船重影响。自由练习的 19 组离线条件分支检查覆盖占用大厅、竞赛期间拒绝加入、多人自由加入、重复领取／容量失败、退出恢复和不罚时返航；该检查执行有限的 scoreboard/tag 命令语义，不替代 Minecraft 的 Brigadier 解析或多人游玩。报告为 [free-practice-0.10.20.json](free-practice-0.10.20.json)。地图 12 个 region 文件逐字节不变，更新了数据包、名称和指南；ZIP 校验及开发副本路径见 [final-map-copy.json](final-map-copy.json)。未编译 Java 或启动 Minecraft。

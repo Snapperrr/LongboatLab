@@ -12,3 +12,5 @@ scoreboard objectives add lr_p0_oars dummy
 scoreboard objectives add lr_p1_boats dummy
 scoreboard objectives add lr_p2_fish dummy
 scoreboard objectives add lr_p3_fish dummy
+scoreboard objectives add lr_free trigger
+scoreboard objectives add lr_fstock dummy

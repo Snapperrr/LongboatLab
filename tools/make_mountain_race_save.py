@@ -14,6 +14,7 @@ import mountain_scenery
 import sculpted_wonders
 import rally_pit_stops
 import rally_ground_details
+import rally_free_practice
 import make_shared_race_save as course
 from race_nbt import *
 
@@ -573,7 +574,8 @@ def configure():
 
 def artifacts(chunks):
     gates=course.GATES
-    manifest={'minecraft':'1.21.1','required_mod':'longboatlab >=0.10.17','length_blocks':round(LENGTH,2),
+    manifest={'minecraft':'1.21.1','required_mod':'longboatlab >=0.10.20','length_blocks':round(LENGTH,2),
+        'free_practice':{'tool':'amethyst_shard','trigger':'lr_free','phase':4,'navigation':False,'timing':False,'repeat_supplies':True},
         'chunks':chunks,'gates':gates,'mountain_start':MOUNTAIN_START,'mountain_end_y':int(water_y(LENGTH)),
         'spiral_turns':SPIRAL_TURNS,'main_corner_count':len(FLAT_WAYPOINTS)-2,'arrows':ARROWS,'structures':STRUCTURES,
         'supports':SUPPORTS,
@@ -587,7 +589,7 @@ def artifacts(chunks):
     (OUT.parent/(OUT.name+'_manifest.json')).write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
     guide=f'''# 河豚盘山拉力赛 V12
 
-Minecraft Java 1.21.1 / Fabric / Longboat Lab 0.10.17 及以上。
+Minecraft Java 1.21.1 / Fabric / Longboat Lab 0.10.20 及以上。
 地图目录：{OUT.name}。这是独立新存档，旧版已游玩进度保留。
 
 ## 路线
@@ -619,6 +621,7 @@ R 切换形态，空格跳跃/松钩，G 发射钩爪，W/S 收放，方向键�
 离线生成存档并检查 NBT、区块、路径连通取样、垂直净空、近道检查点与数据包引用；另按实际存档方块核对靠泊船体空间、箱子及工作台的视线和交互距离。未编译或启动游戏，船内交互、实际浮力和转弯仍需实机驾驶验收。
 生成：python tools/make_mountain_race_save.py；校验：python tools/check_mountain_race_save.py。
 '''
+    guide += rally_free_practice.GUIDE
     (OUT/'README_游玩指南.md').write_text(guide,encoding='utf-8')
     (OUT.parent/(OUT.name+'_游玩指南.md')).write_text(guide,encoding='utf-8')
     (OUT/'.generated-pristine').write_text('Generated offline. Never overwrite a played save.\n',encoding='utf-8')
@@ -634,9 +637,9 @@ def main():
             or any((OUT/n).exists() for n in ('session.lock','playerdata','stats','advancements'))):
         raise SystemExit('Refusing to overwrite an existing or played save: '+str(OUT))
     configure();shortcuts();OUT.mkdir(parents=True,exist_ok=True)
-    geometry();course.pack();navigation();rally_pit_stops.pack(sys.modules[__name__]);course.level()
+    geometry();course.pack();navigation();rally_pit_stops.pack(sys.modules[__name__]);rally_free_practice.install(OUT);course.level()
     root=decode(gzip.decompress((OUT/'level.dat').read_bytes()))
-    root['Data'][1]['LevelName']=string('河豚盘山拉力赛 V12')
+    root['Data'][1]['LevelName']=string('河豚盘山拉力赛 V12 · 自由练习')
     root['Data'][1]['BorderCenterX']=double(1400)
     # WorldSaveProperties expects this compound even for an overworld-only adventure map.
     root['Data'][1]['DragonFight']=compound({'NeedsStateScanning':byte(1),

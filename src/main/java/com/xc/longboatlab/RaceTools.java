@@ -15,7 +15,7 @@ import net.minecraft.util.TypedActionResult;
 
 /** Map-issued tools request a fixed datapack action; item NBT never executes arbitrary commands. */
 public final class RaceTools {
-    private static final Set<String> ACTIONS = Set.of("rescue", "boat", "practice", "leave", "reset", "help");
+    private static final Set<String> ACTIONS = Set.of("rescue", "boat", "practice", "free", "leave", "reset", "help");
     private RaceTools() {}
 
     private static String action(ItemStack stack) {

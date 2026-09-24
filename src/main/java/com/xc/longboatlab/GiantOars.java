@@ -80,7 +80,9 @@ public final class GiantOars {
         return List.copyOf(result);
     }
     public static double phase(BoatEntity boat, boolean left) {
-        return ((BoatAccess) boat).longboat$visualState().getDouble(left ? "GiantLeftPhase" : "GiantRightPhase");
+        BoatAccess access = (BoatAccess) boat;
+        return boat.getWorld().isClient ? access.longboat$visualState().getDouble(left ? "GiantLeftPhase" : "GiantRightPhase")
+                : access.longboat$abilities() == null ? 0 : access.longboat$abilities().giantPhase(left);
     }
     public static BoatGeometry.OarPose pose(BoatEntity boat, Mounted mount, double phase) {
         double size = mount.scale();

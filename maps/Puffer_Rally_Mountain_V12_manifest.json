@@ -1,6 +1,6 @@
 {
   "minecraft": "1.21.1",
-  "required_mod": "longboatlab >=0.10.17",
+  "required_mod": "longboatlab >=0.10.20",
   "length_blocks": 4655.78,
   "chunks": 4284,
   "gates": [
@@ -213277,5 +213277,13 @@
       ]
     ],
     "surface_material_patches": true
+  },
+  "free_practice": {
+    "tool": "amethyst_shard",
+    "trigger": "lr_free",
+    "phase": 4,
+    "navigation": false,
+    "timing": false,
+    "repeat_supplies": true
   }
 }

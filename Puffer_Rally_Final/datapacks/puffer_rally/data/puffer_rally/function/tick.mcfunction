@@ -1,3 +1,9 @@
+scoreboard players enable @a[tag=lr_tools] lr_free
+execute as @a[scores={lr_free=1..}] at @s run function puffer_rally:use_free
+scoreboard players set @a[scores={lr_free=1..}] lr_free 0
+execute as @a[tag=lr_tools,tag=lr_use_free] at @s run function puffer_rally:use_free
+tag @a[tag=lr_use_free] remove lr_use_free
+scoreboard players remove @a[scores={lr_fstock=1..}] lr_fstock 1
 scoreboard players add #housekeeping lr_tmp 1
 execute if score #housekeeping lr_tmp matches 6.. run scoreboard players set #housekeeping lr_tmp 1
 scoreboard players add #tick lr_state 1

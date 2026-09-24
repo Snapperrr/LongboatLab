@@ -10,7 +10,7 @@
   "finish_harbor_checked": true,
   "night_lighting_samples": 2178,
   "minimum_block_light_lower_bound": 8,
-  "functions": 196,
+  "functions": 209,
   "single_kind_crates": 4,
   "ground_details": 282,
   "station_resource_order": [

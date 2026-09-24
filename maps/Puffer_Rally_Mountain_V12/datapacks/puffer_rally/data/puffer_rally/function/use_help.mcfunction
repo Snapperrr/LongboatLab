@@ -4,3 +4,5 @@ tellraw @s {"text":"右键道具：指南针救援 +10秒 · 追溯指针换船 
 tellraw @s {"text":"每站仅一种资源：绿港木铲6、蓝港木船2、黄港河豚4。","color":"aqua","bold":false}
 tellraw @s {"text":"乘船靠岸，空手右键箱子；蓝港工作台紧挨船箱。","color":"aqua","bold":false}
 tellraw @s {"text":"蹲下持木铲右键船侧：安装这一叠，背包里的不动。","color":"aqua","bold":false}
+tellraw @s {"text": "绿宝石：计时单练。紫水晶：自由练习，无偏航提醒。", "color": "aqua"}
+tellraw @s {"text": "自由练习：补给可重复领，指南针返航不罚时，时钟重置。", "color": "aqua"}

@@ -5,3 +5,4 @@ execute unless data entity @s Inventory[{components:{"minecraft:custom_data":{Lo
 execute unless data entity @s Inventory[{components:{"minecraft:custom_data":{LongboatRaceTool:"leave"}}}] run function puffer_rally:give_leave
 execute unless data entity @s Inventory[{components:{"minecraft:custom_data":{LongboatRaceTool:"reset"}}}] run function puffer_rally:give_reset
 execute unless data entity @s Inventory[{components:{"minecraft:custom_data":{LongboatRaceTool:"help"}}}] run function puffer_rally:give_help
+execute unless data entity @s Inventory[{components:{"minecraft:custom_data":{LongboatRaceTool:"free"}}}] run function puffer_rally:give_free

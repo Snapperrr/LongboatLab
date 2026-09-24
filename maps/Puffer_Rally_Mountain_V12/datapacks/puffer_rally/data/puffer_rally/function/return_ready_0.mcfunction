@@ -1,3 +1,4 @@
+execute if entity @s[tag=lr_free] run return run function puffer_rally:free_return_ready
 execute unless entity @s[tag=lr_rescue_pending,tag=lr_racer] run return 0
 execute if entity @s[tag=lr_replace_pending] run ride @s dismount
 scoreboard players add @s lr_time 200

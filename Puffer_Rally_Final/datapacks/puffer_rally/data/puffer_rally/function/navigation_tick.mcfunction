@@ -1,3 +1,4 @@
+execute if score #phase lr_state matches 4 run return 0
 scoreboard players add #nav lr_navclock 1
 execute unless score #nav lr_navclock matches 10.. run return 0
 scoreboard players set #nav lr_navclock 0

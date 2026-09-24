@@ -46,7 +46,13 @@ def main():
     shutil.copytree(SOURCE,FINAL,dirs_exist_ok=True)
     assert hashes(FINAL)==wanted
     # Import a new version only. Never update a world that has been opened in Minecraft.
-    run=(ROOT/'run/saves'/SOURCE.name).resolve()
+    free_practice=(SOURCE/'datapacks/puffer_rally/data/puffer_rally/function/free_start.mcfunction').is_file()
+    run_name=SOURCE.name+('_Free_Practice' if free_practice else '')
+    run=(ROOT/'run/saves'/run_name).resolve()
+    suffix=2
+    while run.exists() and (any((run/n).exists() for n in ('session.lock','playerdata','stats','advancements'))
+                            or not (run/'.generated-pristine').is_file()):
+        run=(ROOT/'run/saves'/(run_name+'_'+str(suffix))).resolve();suffix+=1
     if run.exists():
         pristine(run);assert hashes(run)==wanted,'Existing V12 differs; refusing to overwrite'
     else:shutil.copytree(SOURCE,run)
@@ -58,7 +64,9 @@ def main():
     assert workspace_zip.read_bytes()==(ROOT/'Puffer_Rally_Final.zip').read_bytes()
     data=decode(gzip.decompress((SOURCE/'level.dat').read_bytes()))['Data'][1]
     report=dict(source=SOURCE.relative_to(ROOT).as_posix(),copy='Puffer_Rally_Final',archive='Puffer_Rally_Final.zip',
-                map_revision='V12',recommended_mod_version='0.10.17',minecraft='1.21.1',
+                map_revision='V12 + free practice' if free_practice else 'V12',
+                recommended_mod_version='0.10.20' if free_practice else '0.10.17',minecraft='1.21.1',
+                free_practice=free_practice,
                 level_name=data['LevelName'][1],data_version=data['DataVersion'][1],files=len(wanted),
                 regions=len(list((SOURCE/'region').glob('*.mca'))),save_bytes=sum(p.stat().st_size for p in files(SOURCE).values()),
                 archive_bytes=(ROOT/'Puffer_Rally_Final.zip').stat().st_size,
